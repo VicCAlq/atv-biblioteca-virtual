@@ -1,0 +1,31 @@
+.container-titulo {
+  display: inline-flex; 
+  justify-content: space-between; 
+  width: 100%; 
+  align-items: center;
+}
+
+.container-lista {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2fr repeat(1, 1fr);
+  grid-gap: 0px 20px;
+}
+
+.formulario {
+  display: flex; 
+  flex-direction: column; 
+  width: 100%;
+}
+
+.apagar:hover {
+  background-color: maroon;
+}
+
+.titulo-biblioteca {
+  margin: 10px 0;
+}
+
+.titulo-formulario {
+  margin: 10px auto 20px 0px;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
+  />
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="container-titulo">
+    <h1 class="titulo-biblioteca">Minha biblioteca de joguíneos</h1>
+    <button id="input-recarregar" style="height: 3rem;">Recarregar</button>
+  </div>
+  <div class="container-lista" >
+    <section id="lista-biblioteca" style="width: 100%;">
+      <h3 id="carregamento" style="display: none">Carregando jogos...</h3>
+      <h3 id="erro" style="display: none"></h3>
+
+      <div id="main">
+        <!-- INNERHTML É TUDO QUE VEM AQUI DENTRO DESSA DIV -->
+      </div>
+    </section>
+
+    <!-- FORMULÁRIO ABAIXO -->
+    <form id="formulario" class="formulario">
+      <h2 class="titulo-formulario">Adicionar novo jogo</h2>
+      <label for="input-nome">Nome do jogo: *</label>
+      <input type="text" name="input-nome" id="input-nome" required/>
+
+      <label for="input-ano">Ano de lançamento: </label>
+      <input type="number" name="input-ano" id="input-ano"/>
+
+      <label for="input-desenvolvedor">Desenvolvedor: </label>
+      <input type="text" name="input-desenvolvedor" id="input-desenvolvedor"/>
+
+      <label for="input-genero">Gênero: </label>
+      <input type="text" name="input-genero" id="input-genero"/>
+
+      <label for="input-plataforma">Plataforma: </label>
+      <input type="text" name="input-plataforma" id="input-plataforma"/>
+
+      <label for="input-jogadores">Quantidade de jogadores:</label>
+      <input type="text" name="input-jogadores" id="input-jogadores"/>
+
+      <label for="input-registrados">Jogadores cadastrados: </label>
+      <sup>(separar por vírgula)</sup>
+      <input type="text" name="input-registrados" id="input-registrados"/>
+
+      <div style="display: flex; flex-direction: row; justify-content: flex-end;">
+        <button type="submit" id="input-enviar">Salvar</button>
+        <button type="button" id="input-cancelar" style="background-color: maroon;">Cancelar</button>
+      </div>
+    </form>
+
+  </div>
+
+  <script type="text/javascript" src="index.js"></script>
+
+</body>
+</html>
+
