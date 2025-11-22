@@ -1,7 +1,9 @@
 {
   "name": "games-api",
+  "private": true,
   "version": "0.0.1",
-  "description": "Express API for managing games",
+  "type": "commonjs",
+  "description": "Biblioteca virtual para gerenciamento de personagens",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
