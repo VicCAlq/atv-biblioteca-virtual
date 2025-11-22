@@ -1,3 +1,15 @@
+/*  INFO: #### SOBRE ESTE ARQUIVO ################################################
+
+/**
+ * @author Victor Cavalcanti (www.github.com/VicCAlq) <victor.mca.dev@gmail.com>
+ * @license MIT
+ * @copyright Victor Cavalcanti 2025
+ *
+ * @file Este arquivo compreende os estilos em CSS utilizado no cliente.
+ * Vocês encontrarão informações sobre o CSS utilizado aqui:
+ * <https://developer.mozilla.org/pt-BR/docs/Web/CSS/Reference>
+ */
+
 .container-titulo {
   display: inline-flex; 
   justify-content: space-between; 

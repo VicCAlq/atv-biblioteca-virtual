@@ -8,7 +8,15 @@
  * @file Este arquivo compreende todo o servidor utilizado pela aplicação.
  * Vocês encontrarão diversos comentários como este ao longo do código explicando 
  * cada parte. Leiam com atenção e no seu tempo.
+ *
+ * Os comentários explicativos são direcionados a alunos do ensino médio.
+ * A linguagem busca ser o menos técnica o possível, portanto algumas das
+ * explicações são superficiais, ou usam analogias imperfeitas.
  */
+
+
+
+
 
 //  INFO: #### SETUP (configuração inicial) ######################################
 
@@ -34,7 +42,7 @@ const { Database } = require('sqlite3');
 const app = express();
 /** Configuramos a "porta" onde o cliente/frontend deve se conectar.
  *  Ela corresponde ao número que vem após `http://localhost:` */
-const PORT = process.env.PORT || 3000;
+const PORTA = process.env.PORT || 3000;
 
 /**
  * Nas três linhas abaixo nós inicializamos algumas configurações utilizadas
@@ -57,6 +65,10 @@ app.use(express.json());
 /** `express.static`: Configura o servidor para enviar arquivos "estáticos".
  *                    Estes arquivos são os nossos HTML, CSS e JS do cliente*/
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
 
 //  INFO: #### BANCO DE DADOS ####################################################
 
@@ -172,8 +184,11 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
       }
     });
   }
-  /** WARN: Final da função anônima de criação do banco de dados */
-});
+}); /** WARN: Final da função anônima de criação do banco de dados */
+
+
+
+
 
 //  INFO: #### CRIAÇÃO DAS ROTAS #################################################
 
@@ -223,8 +238,10 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
   */
 let instr_rotas = ""; console.log(instr_rotas);
 
+// TIP:--------------------------------------------------------------------------
+
 /**
-  * WARN: Primeira rota: Solicitar todos os itens do banco de dados
+  * INFO: Primeira rota: Solicitar todos os itens do banco de dados
   *
   * Aqui criamos nossa primeira rota: Utilizamos o método `GET` no endereço
   * `/api/biblioteca` e nas instruções da função anônima dizemos como o servidor
@@ -235,212 +252,533 @@ app.get('/api/biblioteca', (req, res) => {
 /**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
-  /** Comando `SQL` que vai ser executado pelo banco de dados */
+  /** Comando `SQL` que vai ser executado pelo banco de dados.
+   *  Nele, o asterisco (*) é um "apelido" para representar "todas as colunas"
+   *  Traduzindo as instruções (não o inglês) temos: 
+   *  "Me envie todas as colunas de tudo da tabela Biblioteca" */
   const sql = 'SELECT * FROM Biblioteca';
   
-  // Executa a instrução SQL e retorna um possível erro e um possível resultado
-  db.all(sql, [], (err, rows) => {
-    // Verificação de erro
-    if (err) {
-      res.status(400).json({ error: err.message });
+  /**
+   * O método `all()` do banco de dados executa um comando SQL e retorna um
+   * objeto contendo todos os valores retornados pelo comando SQL executado.
+   * Ele requer os argumentos:
+   * - Comando SQL: O comando SQL em texto a ser executado
+   * - Parâmetros: Lista de valores para serem utilizados junto com o comando.
+   *               Neste caso como não precisamos de nenhum parâmetro, enviamos
+   *               uma lista vazia.
+   * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
+   *                  resultado ou com o possível erro.
+   */
+  db.all(sql, [], (erro, rows) => {
+    /** GOTO: erro_400
+     * Neste bloco "if-else" abaixo tratamos o erro:
+     * `res.status(400).json({ error: erro.message })` consiste de duas 
+     * instruções executadas em sequência, ambas enviadas como para o cliente
+     * como `resultado` da requisição:
+     * - `.status(400)`: Envia um código "400" para o cliente. Se trata de uma
+     *                   numeração que comunica para o cliente o resultado da
+     *                   comunicação entre cliente e servidor.
+     *                   `400` representa erro na formação da requisição, que
+     *                   significa que a mensagem que o cliente mandou contém
+     *                   algum erro.
+     * - `.json({ error: erro.message })`: Converte a mensagem de erro em um 
+     *                   objeto JavaScript e envia para o cliente.
+     *
+     * O `return` vazio serve para encerrar a função e não fazer mais nada.
+     */
+    if (erro) {
+      res.status(400).json({ error: erro.message });
       return;
     }
-    // Converte o resultado para o formato JSON e envia para o frontend
+
+    /** GOTO: sucesso_get
+     * Se não ocorrer um erro que execute o bloco de código acima, é executado
+     * o código a seguir: `res.json(conteúdo)` envia o que é passado dentro
+     * dos parênteses para o cliente, em formato JSON.
+     *
+     * Aqui estamos enviando um objeto que contém uma propriedade `message`
+     * contendo o status da requisição, e na propriedade `data` as informações
+     * que o cliente solicitou.
+     */
     res.json({
       message: 'success',
       data: rows
     });
   });
-  /** WARN: Final da função anônima da rota de pedido de todos os itens */
-});
+}); /** WARN: Final da função anônima da rota de pedido de todos os itens */
 
-// Rota para enviar um item específico da biblioteca com o comando GET
+// TIP:--------------------------------------------------------------------------
+
+/**
+  * INFO: Segunda rota: Solicitar um único item do banco de dados
+  *
+  * Esta é nossa segunda rota: Utilizamos o método `GET` no endereço
+  * `/api/biblioteca/numero_do_id` e nas instruções da função anônima
+  * dizemos como o servidor deve tratar essa solicitação. A função principal
+  * aqui é a de enviar para o cliente um único item armazenado no banco de
+  * dados de acordo com seu ID.
+  */
 app.get('/api/biblioteca/:id', (req, res) => {
 /**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
-  // Instrução SQL a ser executada, vai retornar o item correspoondente a variável "id"
+  /** Comando `SQL` que vai ser executado pelo banco de dados.
+   *  Nele, o asterisco (*) é um "apelido" para representar "todas as colunas", e
+   *  a interrogação (?) é um caractere que vai ser substituído pelo valor de
+   *  uma variável na hora que executarmos a instrução.
+   *
+   *  Traduzindo as instruções (não o inglês) temos:
+   *  "Me envie todas as colunas de tudo da tabela Biblioteca que tiver o 
+   *  valor da coluna 'id' igual ao valor informado" */
   const sql = 'SELECT * FROM Biblioteca WHERE id = ?';
-  // Pega a variável "id" nos parâmetros da requisição
+
+  /** O objeto `req` possui algumas propriedades dentro dele. Aqui utilizaremos
+   * a propriedade `id` que fica dentro da propriedade `params` do objeto `req`.
+   * Esta variável será o "ID" que substituirá a interrogação acima */
   const params = [req.params.id];
+
+  /** 
+   * TIP: Daí você se pergunta: "Não dava pra inserir a variável direto no texto
+   * do comando SQL?"
+   *
+   * Sim, dava, com `SELECT * FROM Biblioteca WHERE id = ${req.params.id}`
+   *
+   * Mas em hipótese nenhuma devemos fazer isso, pois se trata de um risco de
+   * segurança grave chamado `SQL Injection`, ou "Injeção de SQL".
+   
+   * Explicar sobre essa falha de segurança foge do escopo deste exercício, mas
+   * fica o nome para quem quiser pesquisar.
+   */
   
-  // Executa a instrução SQL e retorna um possível erro e um possível resultado
-  db.get(sql, params, (err, row) => {
-    // Verificação de erro
-    if (err) {
-      res.status(400).json({ error: err.message });
+  /**
+   * O método `get()` do banco de dados executa um comando SQL e retorna um
+   * objeto contendo todos os valores retornados pelo comando SQL executado.
+   * A diferença dele para o `all()` é que os valores retornados correspondem
+   * apenas a uma única linha da tabela do banco de dados.
+   *
+   * Assim como o método `all()`, `get()` requer os argumentos:
+   * - Comando SQL: O comando SQL em texto a ser executado
+   * - Parâmetros: Lista de valores para serem utilizados junto com o comando.
+   *               Neste caso o "id" dos parâmetros entra no lugar da 
+   *               interrogação do comando SQL acima.
+   * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
+   *                  resultado ou com o possível erro.
+   */
+  db.get(sql, params, (erro, row) => {
+    /** Exatamente a mesma verificação de erro desta seção da rota anterior.
+     * Pesquise por "erro_400" para localizar a descrição deste erro. */
+    if (erro) {
+      res.status(400).json({ error: erro.message });
       return;
     }
-    // Item da biblioteca não encontrado
+    /** GOTO: erro_404
+     * Aqui já estamos tratando de um erro diferente, mas o processo segue
+     * exatamente igual, mudando apenas o código e a mensagem:
+     * `404` é o código usado para quando algo não é encontrado, neste caso,
+     * não foi encontrado nenhum item com o ID informado pelo cliente.
+     */
     if (!row) {
       res.status(404).json({ error: 'Item não encontrado' });
       return;
     }
-    // Converte o resultado para o formato JSON e envia para o frontend
+    /** Pesquise por "sucesso_get" aqui no código para encontrar a descrição. */
     res.json({
       message: 'success',
       data: row
     });
   });
-  /** WARN: Final da função anônima da rota de pedido de um único item */
-});
+}); /** WARN: Final da função anônima da rota de pedido de um único item */
 
-// Rota para criar um novo item na biblioteca com o comando POST
+// TIP:--------------------------------------------------------------------------
+
+/**
+  * INFO: Terceira rota: Receber um item do cliente para ser cadastrado
+  *                      no banco de dados
+  *
+  * Aqui temos nossa terceira rota: Utilizamos o método `POST` no endereço
+  * `/api/biblioteca` e nas instruções da função anônima dizemos como o servidor
+  * deve tratar essa solicitação. A função principal aqui é a de receber um Item
+  * enviado pelo cliente, e então enviar este item para o banco de dados.
+  */
 app.post('/api/biblioteca', (req, res) => {
 /**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
-  // Cria as variáveis abaixo a partir do que foi enviado na requisição do frontend.
-  // Os nomes das variáveis DEVEM corresponder as propriedades do objeto que vocês criaram para os itens da biblioteca
-  // NOTE: ALTERAR OS ITENS ABAIXO PARA CORRESPONDER AS PROPRIEDADES DOS OBJETOS DA BIBLIOTECA
+  /**
+   * Aqui utilizamos o argumento `req` da função anônima.
+   * Ele se trata de um objeto, e uma de suas propriedades é o objeto `body`.
+   * `body` por sua vez contém as propriedades dos objetos criados pela classe
+   * que você criou no cliente/frontend.
+   *
+   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * aos nomes das propriedades da classe criada no frontend.
+   */
   const {
+    // FIX: Editar os parâmetros da linha seguinte até...
     nome,
-    ano_lancamento,
-    desenvolvedor,
-    plataforma,
-    genero,
-    jogadores,
-    jogadores_registrados
+    vida,
+    classe,
+    nivel,
+    ataque,
+    defesa,
+    ativo,
+    dataDeEntrada
+    // FIX: Até esta última linha acima.
   } = req.body;
 
-  // Verificação para exigir que o item seja criado com um nome
+  /** Pequena verificação de erro para que o servidor exija que o valor 
+   * para a propriedade "nome" não seja nulo*/
   if (!nome) {
+    /** Pesquise por "erro_400" para a descrição deste tipo de erro*/
     return res.status(400).json({ error: 'O nome é obrigatório' });
   }
   
-  // Instrução SQL a ser executada para criar o novo item na biblioteca
-  // NOTE: ALTERAR OS ITENS ABAIXO PARA CORRESPONDER AS PROPRIEDADES DOS OBJETOS DA BIBLIOTECA
-  const sql = `INSERT INTO Biblioteca (nome, ano_lancamento, desenvolvedor, plataforma, genero, jogadores, jogadores_registrados) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`;
-  // Lista com as variáveis que vão conter os valores do item a ser criado
-  // NOTE: ALTERAR OS ITENS ABAIXO PARA CORRESPONDER AS PROPRIEDADES DOS OBJETOS DA BIBLIOTECA
-  const params = [nome, ano_lancamento, desenvolvedor, plataforma, genero, jogadores, jogadores_registrados];
+  /** Comando `SQL` que vai ser executado pelo banco de dados.
+   * Nele, o asterisco (*) é um "apelido" para representar "todas as colunas", e
+   * as interrogações (?) são  caracteres que vão ser substituídos pelo valor
+   * das variáveis armazenadas dentro de uma lista chamada "params".
+   *
+   * A quantidade de interrogações DEVE corresponder a quantidade de colunas
+   * da tabela.
+   *
+   * Traduzindo as instruções (não o inglês) temos:
+   * "Na tabela Biblioteca, insira nas colunas a seguir ( lista de colunas )
+   * os valores (lista de valores na mesma ordem que a lista de colunas)"
+   *
+   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * aos nomes das propriedades da classe criada no frontend.
+   */
+  const sql = `INSERT INTO Biblioteca (
+  ${""/* FIX: Editem a partir da linha abaixo, separando com vírgula */}
+    nome,
+    vida,
+    classe,
+    nivel,
+    ataque,
+    defesa,
+    ativo,
+    dataDeEntrada
+  ${""/* FIX: Até aqui. A última linha NÃO PODE terminar com vírgula */}
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  // Executa a instrução SQL e retorna um possível erro e um possível resultado
-  db.run(sql, params, function(err) {
-    // Verificação de erro
-    if (err) {
-      res.status(400).json({ error: err.message });
+  /** Lista contendo os valores que entrarão no lugar das interrogações
+   * quando o comando SQL acima for executado
+   *
+   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * aos nomes das propriedades da classe criada no frontend.
+   */
+  const params = [
+    // FIX: Editar os parâmetros da linha seguinte até...
+    nome,
+    vida,
+    classe,
+    nivel,
+    ataque,
+    defesa,
+    ativo,
+    dataDeEntrada
+    // FIX: Até esta última linha acima.
+  ];
+
+  /** GOTO: db_run
+   * O método `run()` do banco de dados executa um comando SQL mas não retorna
+   * nenhum dado, apenas um "apontador" para o próprio banco de dados para caso
+   * seja de nosso interesse anexar mais comandos na sequência.
+   *
+   * Assim como o método `all()` e `get()`, `run()` requer os argumentos:
+   * - Comando SQL: O comando SQL em texto a ser executado
+   * - Parâmetros: Lista de valores para serem utilizados junto com o comando.
+   *               Aqui nossos parâmetros são os valores informados pelo cliente
+   *               para as propriedades do objeto novo criado.
+   * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
+   *                  resultado ou com o possível erro.
+   */
+  db.run(sql, params, function(erro) {
+    /** Exatamente a mesma verificação de erro desta seção da rota anterior.
+     * Pesquise por "erro_400" para localizar a descrição deste erro. */
+    if (erro) {
+      res.status(400).json({ error: erro.message });
       return;
     }
-    // Converte o resultado para o formato JSON e envia para o frontend
+    /** GOTO: sucesso_post 
+     * Se não ocorrer um erro que execute o bloco de código acima, é executado
+     * o código a seguir: `res.json(conteúdo)` envia o que é passado dentro
+     * dos parênteses para o cliente, em formato JSON.
+     *
+     * Aqui estamos enviando um objeto que contém uma propriedade `message`
+     * contendo o status da requisição, e as propriedades `data` e `id` com o ID
+     * do novo item criado no banco de dados.
+     */
     res.json({
-      message: 'Game created successfully',
+      message: 'Personagem adicionado com sucesso',
       data: { id: this.lastID },
       id: this.lastID
     });
   });
-  /** WARN: Final da função anônima da rota de criação de um item novo */
-});
+}); /** WARN: Final da função anônima da rota de criação de um item novo */
 
-// Rota para modificar um item na biblioteca com o comando POST
+// TIP:--------------------------------------------------------------------------
+
+/**
+  * INFO: Quarta rota: Atualizar um item já existente no banco de dados
+  *
+  * Abaixo fica a quarta rota: Utilizamos o método `PUT` no endereço
+  * `/api/biblioteca/numero_do_id` e nas instruções da função anônima dizemos
+  * como o servidor deve tratar essa solicitação. A função principal aqui é a
+  * de receber um Item enviado pelo cliente, e então usar as informações deste
+  * item para atualizar um item já existente no banco de dados.
+  */
 app.put('/api/biblioteca/:id', (req, res) => {
 /**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
-  // Cria as variáveis abaixo a partir do que foi enviado na requisição do frontend.
-  // Os nomes das variáveis DEVEM corresponder as propriedades do objeto que vocês criaram para os itens da biblioteca
-  // NOTE: ALTERAR OS ITENS ABAIXO PARA CORRESPONDER AS PROPRIEDADES DOS OBJETOS DA BIBLIOTECA
+  /**
+   * Aqui utilizamos o argumento `req` da função anônima.
+   * Ele se trata de um objeto, e uma de suas propriedades é o objeto `body`.
+   * `body` por sua vez contém as propriedades dos objetos criados pela classe
+   * que você criou no cliente/frontend.
+   *
+   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * aos nomes das propriedades da classe criada no frontend.
+   */
   const {
+    // FIX: Editar os parâmetros da linha seguinte até...
     nome,
-    ano_lancamento,
-    desenvolvedor,
-    plataforma,
-    genero,
-    jogadores,
-    jogadores_registrados
+    vida,
+    classe,
+    nivel,
+    ataque,
+    defesa,
+    ativo,
+    dataDeEntrada
+    // FIX: Até esta última linha acima.
   } = req.body;
   
-  // Instrução SQL a ser executada para atualizar o item na biblioteca
-  // NOTE: ALTERAR OS ITENS ABAIXO PARA CORRESPONDER AS PROPRIEDADES DOS OBJETOS DA BIBLIOTECA
-  const sql = `UPDATE Biblioteca 
-         SET nome = ?, ano_lancamento = ?, desenvolvedor = ?, plataforma = ?, genero = ?, jogadores = ?, jogadores_registrados = ?
-         WHERE id = ?`;
-  // Lista com as variáveis que vão conter os valores do item a ser atualizado
-  // NOTE: ALTERAR OS ITENS ABAIXO PARA CORRESPONDER AS PROPRIEDADES DOS OBJETOS DA BIBLIOTECA
-  const params = [nome, ano_lancamento, desenvolvedor, plataforma, genero, jogadores, jogadores_registrados, req.params.id];
+  /** Comando `SQL` que vai ser executado pelo banco de dados.
+   * Nele, o asterisco (*) é um "apelido" para representar "todas as colunas", e
+   * as interrogações (?) são  caracteres que vão ser substituídos pelo valor
+   * das variáveis armazenadas dentro de uma lista chamada "params".
+   *
+   * A quantidade de interrogações DEVE corresponder a quantidade de colunas
+   * da tabela.
+   *
+   * Traduzindo as instruções (não o inglês) temos:
+   *
+   * "Na tabela Biblioteca, insira nas colunas a seguir ( lista de colunas )
+   * os valores (lista de valores na mesma ordem que a lista de colunas)
+   * APENAS para o item que tenha o ID igual ao valor informado."
+   *
+   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * aos nomes das propriedades da classe criada no frontend.
+   */
+  const sql = `UPDATE Biblioteca SET 
+    ${""/* FIX: Editem a partir da linha abaixo, separando com vírgula */}
+    nome = ?,
+    vida = ?,
+    classe = ?,
+    nivel = ?,
+    ataque = ?,
+    defesa = ?,
+    ativo = ?,
+    dataDeEntrada = ?,
+    ${""/* FIX: Apenas até a linha acima. */}
+    WHERE id = ?`;
+  /** Lista contendo os valores que entrarão no lugar das interrogações
+   * quando o comando SQL acima for executado
+   *
+   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * aos nomes das propriedades da classe criada no frontend.
+   */
+  const params = [
+    // FIX: Editar os parâmetros da linha seguinte até...
+    nome,
+    vida,
+    classe,
+    nivel,
+    ataque,
+    defesa,
+    ativo,
+    dataDeEntrada,
+    // FIX: Até esta última linha acima. A linha abaixo permanece como está.
+    req.params.id
+  ];
   
-  // Executa a instrução SQL e retorna um possível erro e um possível resultado
-  db.run(sql, params, function(err) {
-    // Verificação de erro
-    if (err) {
-      res.status(400).json({ error: err.message });
+  /**
+   * Confira a explicação deste método procurando por "db_run"
+   *
+   * Assim como o método `all()` e `get()`, `run()` requer os argumentos:
+   * - Comando SQL: O comando SQL em texto a ser executado
+   * - Parâmetros: Lista de valores para serem utilizados junto com o comando.
+   *               Aqui nossos parâmetros são os valores informados pelo cliente
+   *               para as propriedades do objeto a ser atualizado, e seu ID.
+   * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
+   *                  resultado ou com o possível erro.
+   */
+  db.run(sql, params, function(erro) {
+    /** Exatamente a mesma verificação de erro desta seção da rota anterior.
+     * Pesquise por "erro_400" para localizar a descrição deste erro. */
+    if (erro) {
+      res.status(400).json({ error: erro.message });
       return;
     }
-    // Item da biblioteca não encontrado
+    /** Pesquise por "erro_404" para a descrição deste erro abaixo */
     if (this.changes === 0) {
-      res.status(404).json({ error: 'Game not found' });
+      res.status(404).json({ error: 'Personagem não encontrado' });
       return;
     }
-    // Converte o resultado para o formato JSON e envia para o frontend
+    /** GOTO: sucesso_put 
+     * se não ocorrer um erro que execute o bloco de código acima, é executado
+     * o código a seguir: `res.json(conteúdo)` envia o que é passado dentro
+     * dos parênteses para o cliente, em formato json.
+     *
+     * aqui estamos enviando um objeto que contém uma propriedade `message`
+     * contendo o status da requisição, a propriedade `data` contém o id do
+     * item atualizado, e `changes` contém as mudanças realizadas no item.
+     */
     res.json({
-      message: 'Game updated successfully',
+      message: 'Personagem atualizado com sucesso',
       data: { id: req.params.id },
       changes: this.changes
     });
   });
-  /** WARN: Final da função anônima da rota de atualização de um item */
-});
+}); /** WARN: Final da função anônima da rota de atualização de um item */
 
-// Rota para apagar um item na biblioteca com o comando DELETE
+// TIP:--------------------------------------------------------------------------
+
+/**
+  * INFO: Quinta rota: Apagar um item existente no banco de dados
+  *
+  * Segue aqui a quinta rota: Utilizamos o método `DELETE` no endereço
+  * `/api/biblioteca/numero_do_id` e nas instruções da função anônima dizemos
+  * como o servidor deve tratar essa solicitação. A função principal aqui é a
+  * de apagar do banco de dados o item correspondente ao ID enviado pelo cliente.
+  */
 app.delete('/api/biblioteca/:id', (req, res) => {
 /**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
-  // Instrução SQL a ser executada para remover o item da biblioteca
+  /** Comando `SQL` que vai ser executado pelo banco de dados.
+   *  Nele, o asterisco (*) é um "apelido" para representar "todas as colunas", e
+   *  a interrogação (?) é um caractere que vai ser substituído pelo valor de
+   *  uma variável na hora que executarmos a instrução.
+   *
+   *  Traduzindo as instruções (não o inglês) temos:
+   *  Apague da tabela Biblioteca o item cujo ID seja igual ao valor informado */
   const sql = 'DELETE FROM Biblioteca WHERE id = ?';
-  // Identificador do jogo a ser apagado
+
+  /** O objeto `req` possui algumas propriedades dentro dele. Aqui utilizaremos
+   * a propriedade `id` que fica dentro da propriedade `params` do objeto `req`.
+   * Esta variável será o "ID" que substituirá a interrogação acima */
   const params = [req.params.id];
   
-  // Executa a instrução SQL e retorna um possível erro e um possível resultado
-  db.run(sql, params, function(err) {
-    // Verificação de erro
-    if (err) {
-      res.status(400).json({ error: err.message });
+  /**
+   * Confira a explicação deste método procurando por "db_run"
+   *
+   * Assim como o método `all()` e `get()`, `run()` requer os argumentos:
+   * - Comando SQL: O comando SQL em texto a ser executado
+   * - Parâmetros: Lista de valores para serem utilizados junto com o comando.
+   *               Nosso parâmetro aqui é o ID do objeto a ser apagado.
+   * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
+   *                  resultado ou com o possível erro.
+   */
+  db.run(sql, params, function(erro) {
+    /** Pesquise por "erro_400" para localizar a descrição deste erro. */
+    if (erro) {
+      res.status(400).json({ error: erro.message });
       return;
     }
-    // Item da biblioteca não encontrado
+    /** Pesquise por "erro_404" para a descrição deste erro abaixo */
     if (this.changes === 0) {
-      res.status(404).json({ error: 'Game not found' });
+      res.status(404).json({ error: 'Personagem não encontrado' });
       return;
     }
-    // Converte o resultado para o formato JSON e envia para o frontend
+    /** GOTO: sucesso_delete 
+     * se não ocorrer um erro que execute o bloco de código acima, é executado
+     * o código a seguir: `res.json(conteúdo)` envia o que é passado dentro
+     * dos parênteses para o cliente, em formato json.
+     *
+     * aqui estamos enviando um objeto que contém uma propriedade `message`
+     * contendo o status da requisição e a propriedade `changes` contém as 
+     * mudanças realizadas no banco de dados.
+     */
     res.json({
-      message: 'Game deleted successfully',
+      message: 'Personagem apagado com sucesso.',
       changes: this.changes
     });
   });
-  /** WARN: Final da função anônima da rota de remoção de um item */
-});
+}); /** WARN: Final da função anônima da rota de remoção de um item */
 
-// Envia o arquivo "index.html" na rota raiz
+
+
+
+
+//  INFO: #### INSTRUÇÕES FINAIS #################################################
+
+
+/**
+  * INFO: Sexta e última rota: A rota por onde o cliente acessa o site 🙂
+  *
+  * Nossa última rota é super simples: Quando o cliente acessa apenas o endereço
+  * `localhost:3000` sem mais nada após o 3000, o servidor envia para o cliente
+  * os arquivos do frontend. A partir do `index.html` o servidor automaticamente
+  * envia o `index.js` e `index.css` que são chamados pelo HTML.
+  */
 app.get('/', (req, res) => {
+  /**
+    * Aqui usamos `res.sendFile()` ao invés de `res.json()` por que estamos
+    * enviando um arquivo ao invés de um objeto JavaScript.
+    *
+    * Para compor o caminho do arquivo, usamos `path.join()` por que assim
+    * o servidor vai funcionar independente do tipo de caminho de arquivo
+    * do sistema usado:
+    *
+    * Se o sistema for Windows, o caminho seria:
+    * C:\pasta_do_servidor\public\index.hyml
+    *
+    * Mas se fosse qualquer outro sistema, o caminho seria:
+    * /pasta_do_servidor/public/index.html
+    *
+    * Usar `path.join()` faz você não precisar escrever uma lógica para os
+    * dois tipos diferentes de caminho para o arquivo correto.
+    */
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Mensagem de erro para caso alguma das bibliotecas de "Middleware" (topo deste arquivo) falhar
-app.use((err, req, res, next) => {
-  console.error(err.stack);
+
+/** Enviamos erro número 500 (erro do servidor) para caso alguma das ferramentas
+  * de "middleware" dê erro */
+app.use((erro, req, res, next) => {
+  console.error(erro.stack);
   res.status(500).json({ error: 'Erro em alguma das ferramentas de middleware' });
 });
 
-// Gerenciador de erro para rotas não encontradas (erro 404)
+
+/** Enviamos erro número 404 (erro de não encontrado) para quando o cliente
+ * tenta acessar uma rota não existente */
 app.use((req, res) => {
   res.status(404).json({ error: 'Rota não encontrada' });
 });
 
-// Mensagem de quando o servidor é executado
-app.listen(PORT, () => {
-  console.log(`Servidor executando com sucesso no endereço http://localhost:${PORT}`);
+
+/** Comando que "liga" o servidor e o faz responder a porta `3000`
+ * da máquina onde ele estiver rodando, e exibe no terminal uma mensagem
+ * com o link para o cliente. */
+app.listen(PORTA, () => {
+  console.log(`Servidor executando com sucesso no endereço http://localhost:${PORTA}`);
 });
 
-// Fecha a conexão com o banco de dados ao encerrar o servidor
+
+/** Instrução para fechar a conexão com o banco de dados quando o servidor
+ * for encerrado. Se a conexão não for fechada pode haver corrupção nos dados. */
 process.on('SIGINT', () => {
-  db.close((err) => {
-    if (err) {
-      console.error(err.message);
+  db.close((erro) => {
+    if (erro) {
+      console.error(erro.message);
     }
     console.log('Conexão com o banco de dados encerrada com sucesso.');
     process.exit(0);
   });
 });
+
+
+/** INFO: Fim do arquivo! */
