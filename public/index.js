@@ -532,38 +532,84 @@ async function carregarItens() {
   }
 }
 
+/**
+ * A função abaixo, `removerItem`, recebe um ID equivalente aos valores na coluna
+ * `ID` do banco de dados, e então se comunica com o servidor usando o método
+ * `DELETE` para pedir a remoção de um item específico armazenado no banco de
+ * dados, correspondente ao ID recebido. 
+ * Vamos conferir o passo a passo do que ela faz:
+ *
+ * 1. Antes de mais nada, exibimos um "pop-up" (janelinha) pedindo para o usuário
+ *    confirmar se ele quer mesmo remover o item solicitado ou não. Se o usuário
+ *    clicar em "Não"/"Cancelar", a função é encerrada sem fazer nada
+ * 2. Dentro do bloco de `try-catch`, usamos `await fetch` para enviar para a
+ *    rota `/api/biblioteca/numero_do_item` uma mensagem com o método `DELETE`.
+ *    Esta mensagem é a solicitação para apagar o item com o ID correspondente.
+ * 3. O resultado que o servidor mandar para a mensagem acima é armazenado
+ *    na variável `resposta`
+ * 4. Conferimos se dentro da resposta consta uma propriedade `ok`. Se ela NÃO
+ *    existir, enviamos um erro dizendo que não foi possível apagar o item.
+ * 5. Se `resposta.ok` existir, chamamos a função `carregarItens` para recarregar
+ *    os itens da biblioteca, removendo do site o item apagado.
+ * 6. No bloco de `catch`, apenas tratamos algum erro em obter os itens da 
+ *    biblioteca.
+ */
 async function removerItem(id) {
+  /** Passo 1 da descrição acima */
   let confirmacao = confirm("Deseja mesmo remover este item?")
   if (!confirmacao) { return }
 
   try {
+  /** Passos 2 e 3 da descrição acima */
     const resposta = await fetch(`${ENDERECO_BASE}/${id}`, {
       method: "DELETE",
     })
 
+  /** Passo 4 da descrição acima */
     if (!resposta.ok) { throw new Error("Falha em remover item da biblioteca")}
 
+  /** Passo 5 da descrição acima */
     carregarItens()
+  /** Passo 6 da descrição acima */
   } catch (erro) {
     mostrarErro("Falha em remover item: " + erro.message)
   }
 }
 
+/**
+  * A função `inicializar` abaixo realiza algumas configurações finais em alguns
+  * elementos HTML da página, que só podem ser feitos após o JavaScript deste
+  * arquivo ser carregado.
+  */
 function inicializar() {
+  /** Aqui adicionamos em todos os eventos de `submit` (envio de formulário)
+    * a execução das funções abaixo */
   formulario.addEventListener("submit", (evento) => {
+    /** `preventDefault()` é um método existente em `eventos` HTML. Ele impede
+      * que o evento execute seu comportamento padrão: no caso de um evento de
+      * envio de formulário, `preventDefault()` impede que a página seja
+      * recarregada */
     evento.preventDefault()
+    /** Chamamos a função `enviarFormulário` quando o formulário é enviado. */
     enviarFormulario()
   })
 
+  /** Adicionamos ao botão de recarregar a lista de itens a execução da função
+    * `carregarItens`, para que ela possa executar seu objetivo */
   document.getElementById("input-recarregar").addEventListener("click", () => {
     carregarItens()
   })
 
+  /** Adicionamos ao botão de limpar o formulário a execução da função
+    * `limparFormulario`, para que ela possa executar seu objetivo */
   document.getElementById("input-cancelar").addEventListener("click", () => {
     limparFormulario()
   })
 
+  /** Aqui mandamos carregar a lista de itens quando o site inicializar */
   carregarItens()
 }
 
+/** Por fim, chamamos a função `inicializar` acima, para que ela execute seu 
+  * código */
 inicializar()
