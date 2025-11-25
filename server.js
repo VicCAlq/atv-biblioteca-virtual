@@ -1,4 +1,4 @@
-//  INFO: # 0. SOBRE ESTE ARQUIVO ################################################
+//  SEÇÃO: # 0. SOBRE ESTE ARQUIVO ################################################
 
 /**
  * @author Victor Cavalcanti (www.github.com/VicCAlq) <victor.mca.dev@gmail.com>
@@ -21,7 +21,7 @@
 
 
 
-//  INFO: # 1. SETUP (configuração inicial) ######################################
+//  SEÇÃO: # 1. SETUP (configuração inicial) ######################################
 
 /**
  * As quatro linhas abaixo carregam no programa algumas ferramentas e bibliotecas 
@@ -76,7 +76,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-//  INFO: # 2. BANCO DE DADOS ####################################################
+//  SEÇÃO: # 2. BANCO DE DADOS ####################################################
 
 /**
  * Aqui nós criamos um banco de dados utilizando a ferramenta `sqlite3` que
@@ -94,7 +94,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * @type {Database} db
  */
 const db = new sqlite3.Database('./biblioteca.db', (erro) => {
-/**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
+/**AVISO: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
   /** 
@@ -142,7 +142,7 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
      * `dataDeEntrada`: Valor texto, data em que entrou no grupo.
      *
      * Todas as colunas são criadas da mesma forma:
-     * `nome_da_coluna TIPO_DA_COLUNA PROPRIEDADES_DA_COLUNA`
+     * `nome_da_coluna SEPO_DA_COLUNA PROPRIEDADES_DA_COLUNA`
      *
      * Os nomes das colunas devem corresponder ao nome das propriedades dos 
      * objetos criados pela classe na sua aplicação frontend.
@@ -160,13 +160,13 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
      * Existem outros tipos e propriedades, mas SQL não é o foco desta atividade.
      *
      * Após lerem as instruções acima, façam o pedido abaixo:
-     * NOTE: Atividade - Editem as propriedades dentro da instrução "db.run" 
+     * NOTA: Atividade - Editem as propriedades dentro da instrução "db.run" 
      * para corresponderem as propriedades da classe que vocês criaram no 
-     * frontend. Modifiquem as colunas entre as linhas com o texto "FIX".
+     * frontend. Modifiquem as colunas entre as linhas com o texto "EDITE".
      */
     db.run(`CREATE TABLE IF NOT EXISTS Biblioteca (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${""/* FIX: Editem a partir da linha abaixo, separando com vírgula */}
+      ${""/* EDITE: Editem a partir da linha abaixo, separando com vírgula */}
       nome TEXT NOT NULL,
       vida INTEGER,
       classe VARCHAR(100),
@@ -178,7 +178,7 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
       descricao TEXT,
       melhorEquipe TEXT,
       dataDeEntrada VARCHAR(100)
-      ${""/* FIX: Até aqui. A última linha NÃO PODE terminar com vírgula */}
+      ${""/* EDITE: Até aqui. A última linha NÃO PODE terminar com vírgula */}
     )`, (erro) => {
       /**
        * A função `run` que executou o comando do banco de dados acima
@@ -198,16 +198,16 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
       }
     });
   }
-}); /** WARN: Final da função anônima de criação do banco de dados */
+}); /** AVISO: Final da função anônima de criação do banco de dados */
 
 
 
 
 
-//  INFO: # 3. CRIAÇÃO DAS ROTAS #################################################
+//  SEÇÃO: # 3. CRIAÇÃO DAS ROTAS #################################################
 
 /**
-  * WARN: Uma descrição básica do que são as rotas:
+  * AVISO: Uma descrição básica do que são as rotas:
   *
   * `Rotas` são a forma como o servidor/backend e o cliente/frontend se comunicam
   * entre si. Boa parte dessa comunicação segue o padrão de operações `CRUD`, que
@@ -254,10 +254,10 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
   */
 let instr_rotas = ""; console.log(instr_rotas);
 
-// TIP:--------------------------------------------------------------------------
+// SEP:--------------------------------------------------------------------------
 
 /**
-  * INFO: Primeira rota: Solicitar todos os itens do banco de dados
+  * SEÇÃO: Primeira rota: Solicitar todos os itens do banco de dados
   *
   * Aqui criamos nossa primeira rota: Utilizamos o método `GET` no endereço
   * `/api/biblioteca` e nas instruções da função anônima dizemos como o servidor
@@ -265,7 +265,7 @@ let instr_rotas = ""; console.log(instr_rotas);
   * o cliente todos os itens armazenados no banco de dados.
   */
 app.get('/api/biblioteca', (req, res) => {
-/**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
+/**AVISO: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
   /** Comando `SQL` que vai ser executado pelo banco de dados.
@@ -326,12 +326,12 @@ app.get('/api/biblioteca', (req, res) => {
       data: linhasDaTabela
     });
   });
-}); /** WARN: Final da função anônima da rota de pedido de todos os itens */
+}); /** AVISO: Final da função anônima da rota de pedido de todos os itens */
 
-// TIP:--------------------------------------------------------------------------
+// SEP:--------------------------------------------------------------------------
 
 /**
-  * INFO: Segunda rota: Solicitar um único item do banco de dados
+  * SEÇÃO: Segunda rota: Solicitar um único item do banco de dados
   *
   * Esta é nossa segunda rota: Utilizamos o método `GET` no endereço
   * `/api/biblioteca/numero_do_id` e nas instruções da função anônima
@@ -340,7 +340,7 @@ app.get('/api/biblioteca', (req, res) => {
   * dados de acordo com seu ID.
   */
 app.get('/api/biblioteca/:id', (req, res) => {
-/**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
+/**AVISO: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
   /** Comando `SQL` que vai ser executado pelo banco de dados.
@@ -359,7 +359,7 @@ app.get('/api/biblioteca/:id', (req, res) => {
   const params = [req.params.id];
 
   /** 
-   * TIP: Daí você se pergunta: "Não dava pra inserir a variável direto no texto
+   * SEP: Daí você se pergunta: "Não dava pra inserir a variável direto no texto
    * do comando SQL?"
    *
    * Sim, dava, com `SELECT * FROM Biblioteca WHERE id = ${req.params.id}`
@@ -408,12 +408,12 @@ app.get('/api/biblioteca/:id', (req, res) => {
       data: linhaDaTabela
     });
   });
-}); /** WARN: Final da função anônima da rota de pedido de um único item */
+}); /** AVISO: Final da função anônima da rota de pedido de um único item */
 
-// TIP:--------------------------------------------------------------------------
+// SEP:--------------------------------------------------------------------------
 
 /**
-  * INFO: Terceira rota: Receber um item do cliente para ser cadastrado
+  * SEÇÃO: Terceira rota: Receber um item do cliente para ser cadastrado
   *                      no banco de dados
   *
   * Aqui temos nossa terceira rota: Utilizamos o método `POST` no endereço
@@ -422,7 +422,7 @@ app.get('/api/biblioteca/:id', (req, res) => {
   * enviado pelo cliente, e então enviar este item para o banco de dados.
   */
 app.post('/api/biblioteca', (req, res) => {
-/**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
+/**AVISO: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
   /**
@@ -431,11 +431,11 @@ app.post('/api/biblioteca', (req, res) => {
    * `body` por sua vez contém as propriedades dos objetos criados pela classe
    * que você criou no cliente/frontend.
    *
-   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * NOTA: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
    */
   const {
-    // FIX: Editar os parâmetros da linha seguinte até...
+    // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
     vida,
     classe,
@@ -447,7 +447,7 @@ app.post('/api/biblioteca', (req, res) => {
     descricao,
     melhorEquipe,
     dataDeEntrada
-    // FIX: Até esta última linha acima.
+    // EDITE: Até esta última linha acima.
   } = req.body;
 
   /** Pequena verificação de erro para que o servidor exija que o valor 
@@ -469,11 +469,11 @@ app.post('/api/biblioteca', (req, res) => {
    * "Na tabela Biblioteca, insira nas colunas a seguir ( lista de colunas )
    * os valores (lista de valores na mesma ordem que a lista de colunas)"
    *
-   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * NOTA: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
    */
   const sql = `INSERT INTO Biblioteca (
-  ${""/* FIX: Editem a partir da linha abaixo, separando com vírgula */}
+  ${""/* EDITE: Editem a partir da linha abaixo, separando com vírgula */}
     nome,
     vida,
     classe,
@@ -485,9 +485,9 @@ app.post('/api/biblioteca', (req, res) => {
     descricao,
     melhorEquipe,
     dataDeEntrada
-  ${""/* FIX: Até aqui. A última linha NÃO PODE terminar com vírgula */}
+  ${""/* EDITE: Até aqui. A última linha NÃO PODE terminar com vírgula */}
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  /**  FIX: E edite a linha acima modificando a quantidade de interrogações
+  /**  EDITE: E edite a linha acima modificando a quantidade de interrogações
    *   para corresponder a quantidade de propriedades da classe de seu frontend.
    *   A última interrogação NÃO PODE ter uma vírgula depois dela.
    */
@@ -495,11 +495,11 @@ app.post('/api/biblioteca', (req, res) => {
   /** Lista contendo os valores que entrarão no lugar das interrogações
    * quando o comando SQL acima for executado
    *
-   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * NOTA: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
    */
   const params = [
-    // FIX: Editar os parâmetros da linha seguinte até...
+    // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
     vida,
     classe,
@@ -511,7 +511,7 @@ app.post('/api/biblioteca', (req, res) => {
     descricao,
     melhorEquipe,
     dataDeEntrada
-    // FIX: Até esta última linha acima.
+    // EDITE: Até esta última linha acima.
   ];
 
   /** GOTO: db_run
@@ -549,12 +549,12 @@ app.post('/api/biblioteca', (req, res) => {
       id: this.lastID
     });
   });
-}); /** WARN: Final da função anônima da rota de criação de um item novo */
+}); /** AVISO: Final da função anônima da rota de criação de um item novo */
 
-// TIP:--------------------------------------------------------------------------
+// SEP:--------------------------------------------------------------------------
 
 /**
-  * INFO: Quarta rota: Atualizar um item já existente no banco de dados
+  * SEÇÃO: Quarta rota: Atualizar um item já existente no banco de dados
   *
   * Abaixo fica a quarta rota: Utilizamos o método `PUT` no endereço
   * `/api/biblioteca/numero_do_id` e nas instruções da função anônima dizemos
@@ -563,7 +563,7 @@ app.post('/api/biblioteca', (req, res) => {
   * item para atualizar um item já existente no banco de dados.
   */
 app.put('/api/biblioteca/:id', (req, res) => {
-/**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
+/**AVISO: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
   /**
@@ -572,11 +572,11 @@ app.put('/api/biblioteca/:id', (req, res) => {
    * `body` por sua vez contém as propriedades dos objetos criados pela classe
    * que você criou no cliente/frontend.
    *
-   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * NOTA: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
    */
   const {
-    // FIX: Editar os parâmetros da linha seguinte até...
+    // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
     vida,
     classe,
@@ -588,7 +588,7 @@ app.put('/api/biblioteca/:id', (req, res) => {
     descricao,
     melhorEquipe,
     dataDeEntrada
-    // FIX: Até esta última linha acima.
+    // EDITE: Até esta última linha acima.
   } = req.body;
   
   /** Comando `SQL` que vai ser executado pelo banco de dados.
@@ -605,11 +605,11 @@ app.put('/api/biblioteca/:id', (req, res) => {
    * valores informados, mas APENAS para o item que tenha o ID igual ao 
    * valor do ID informado."
    *
-   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * NOTA: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
    */
   const sql = `UPDATE Biblioteca SET 
-    ${""/* FIX: Editem a partir da linha abaixo, separando com vírgula */}
+    ${""/* EDITE: Editem a partir da linha abaixo, separando com vírgula */}
     nome = ?,
     vida = ?,
     classe = ?,
@@ -621,17 +621,17 @@ app.put('/api/biblioteca/:id', (req, res) => {
     descricao = ?,
     melhorEquipe = ?,
     dataDeEntrada = ?,
-    ${""/* FIX: Apenas até a linha acima. Mantenha a vírgula na últina linha */}
+    ${""/* EDITE: Apenas até a linha acima. Mantenha a vírgula na últina linha */}
     WHERE id = ?`;
 
   /** Lista contendo os valores que entrarão no lugar das interrogações
    * quando o comando SQL acima for executado
    *
-   * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
+   * NOTA: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
    */
   const params = [
-    // FIX: Editar os parâmetros da linha seguinte até...
+    // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
     vida,
     classe,
@@ -643,7 +643,7 @@ app.put('/api/biblioteca/:id', (req, res) => {
     descricao,
     melhorEquipe,
     dataDeEntrada,
-    // FIX: Até esta última linha acima. A linha abaixo permanece como está.
+    // EDITE: Até esta última linha acima. A linha abaixo permanece como está.
     req.params.id
   ];
   
@@ -685,12 +685,12 @@ app.put('/api/biblioteca/:id', (req, res) => {
       changes: this.changes
     });
   });
-}); /** WARN: Final da função anônima da rota de atualização de um item */
+}); /** AVISO: Final da função anônima da rota de atualização de um item */
 
-// TIP:--------------------------------------------------------------------------
+// SEP:--------------------------------------------------------------------------
 
 /**
-  * INFO: Quinta rota: Apagar um item existente no banco de dados
+  * SEÇÃO: Quinta rota: Apagar um item existente no banco de dados
   *
   * Segue aqui a quinta rota: Utilizamos o método `DELETE` no endereço
   * `/api/biblioteca/numero_do_id` e nas instruções da função anônima dizemos
@@ -698,7 +698,7 @@ app.put('/api/biblioteca/:id', (req, res) => {
   * de apagar do banco de dados o item correspondente ao ID enviado pelo cliente.
   */
 app.delete('/api/biblioteca/:id', (req, res) => {
-/**WARN: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
+/**AVISO: Aqui dentro temos todo o conteúdo da "função anônima". Cada parte
  * da função também terá seu conteúdo explicado em comentários. */
 
   /** Comando `SQL` que vai ser executado pelo banco de dados.
@@ -750,17 +750,17 @@ app.delete('/api/biblioteca/:id', (req, res) => {
       changes: this.changes
     });
   });
-}); /** WARN: Final da função anônima da rota de remoção de um item */
+}); /** AVISO: Final da função anônima da rota de remoção de um item */
 
 
 
 
 
-//  INFO: # 4. INSTRUÇÕES FINAIS #################################################
+//  SEÇÃO: # 4. INSTRUÇÕES FINAIS #################################################
 
 
 /**
-  * INFO: Sexta e última rota: A rota por onde o cliente acessa o site 🙂
+  * SEÇÃO: Sexta e última rota: A rota por onde o cliente acessa o site 🙂
   *
   * Nossa última rota é super simples: Quando o cliente acessa apenas o endereço
   * `localhost:3000` sem mais nada após o 3000, o servidor envia para o cliente
@@ -825,6 +825,6 @@ process.on('SIGINT', () => {
 });
 
 
-/** INFO: Fim do arquivo! Você encontra uma versão do servidor sem os comentários
+/** SEÇÃO: Fim do arquivo! Você encontra uma versão do servidor sem os comentários
  *  no arquivo `server_sem_comentarios.js`. Ele não tem nem 1/3 da quantidade
  *  de linhas deste arquivo aqui, pode ver que é super simples 🙂 */

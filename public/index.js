@@ -1,4 +1,4 @@
-//  INFO: # 0. SOBRE ESTE ARQUIVO ################################################
+//  SEÇÃO: # 0. SOBRE ESTE ARQUIVO ################################################
 
 /**
  * @author Victor Cavalcanti (www.github.com/VicCAlq) <victor.mca.dev@gmail.com>
@@ -16,7 +16,7 @@
 
 
 
-//  INFO: # 1. CLASSE DOS ITENS DA BIBLIOTECA ####################################
+//  SEÇÃO: # 1. CLASSE DOS ITENS DA BIBLIOTECA ####################################
 
 /**
  * @class Personagem
@@ -35,10 +35,15 @@
  * `defesa`: Multiplicador de defesa do personagem. Número com casa decimal.
  * `ativo`: Valor para se o personagem está ativo ou não. Verdadeiro/Falso
  * `dataDeEntrada`: Data de quando o personagem foi adquirido. Objeto Date.
+ * `desempenho`: Atribui uma nota para o personagem. Número com casa decimal.
+ * `descricao`: Descrição de como o personagem funciona. Texto simples.
+ * `melhorEquipe`: Lista de outros personagens que funcionam bem com este.
  */
 class Personagem {
   /** Aqui no constructor colocamos as propriedades exigidas no preenchimento
-   * de informações do personagem */
+   * de informações do personagem. Mesmo que os objetos da classe tenham mais
+   * propriedades que essas, nos argumentos do constructor entram só os itens
+   * que dependem de preenchimento na hora que o objeto é criado. */
   constructor(
     nome, 
     vida,
@@ -68,7 +73,7 @@ class Personagem {
      * informamos como um texto dentro dos parênteses assim:
      * `new Date("2023-11-18")`
      * Sempre na ordem de "Ano-Mês-Dia". Também é possível informar um horário
-     * específico, mas fica a cargo de você pesquisar como. Não será exigido
+     * específico, mas fica a seu cargo pesquisar como. Não será exigido
      * neste exercício. */
     this.dataDeEntrada = dataDeEntrada || new Date()
     /** Estas três propriedades abaixo não foram solicitadas no constructor:
@@ -101,7 +106,8 @@ class Personagem {
     return tempoDesdeAquisicao
   }
 
-  /** Atribui uma nota para o desempenho do personagem, de 0 a 10 */
+  /** Atribui uma nota para o desempenho do personagem, de 0 a 10. Se a nota
+   * for menor que zero, atribuímos zero, e se for maior que 10, atribuímos 10 */
   avaliar(desempenho) {
     /** Aqui decidi usar `switch/case` ao invés de `if/else` apenas para fins
      * de demonstração de como funciona em comparação ao if/else */
@@ -118,7 +124,8 @@ class Personagem {
     }
   }
 
-  /** Atribui uma descrição para o personagem */
+  /** Atribui uma descrição para o personagem, e impede que a descrição seja
+   * atribuída caso ela tenha menos de 20 caracteres */
   descrever(descricao) {
     if (descricao.length < 20) {
       window.alert("A descrição deve ter pelo menos 20 caracteres")
@@ -137,7 +144,7 @@ class Personagem {
 
 
 
-//  INFO: # 2. CONSTANTES ESSENCIAIS PARA O SITE #################################
+//  SEÇÃO: # 2. CONSTANTES ESSENCIAIS PARA O SITE #################################
 
 /** Estas variáveis abaixo serão utilizadas diversas vezes ao longo de nossa
  * aplicação, portanto já as definimos aqui:
@@ -146,8 +153,8 @@ class Personagem {
  *                  servidor, que no arquivo do servidor foi definido como
  *                  `/api/biblioteca`
  * - biblioteca: Corresponde a `div` com o ID `main` no nosso HTML. É onde vamos
- *               jogar os itens de nossa biblioteca para serem exibidor.
- * - bibliotecaItens: É uma lista que começa vazia, mas é onde os itens da
+ *               jogar os itens de nossa biblioteca para serem exibidos.
+ * - bibliotecaItens: É uma lista que começa vazia, e é onde os itens da
  *                    biblioteca que recebemos do servidor serão armazenados
  *                    antes de serem exibidos na biblioteca.
  * - formulario: Corresponde ao elemento `form` em nosso HTML, ao qual
@@ -164,12 +171,13 @@ let idItemEditado = null;
 
 
 
-//  INFO: # 3. FUNÇÕES QUE LIDAM COM O CONTEÚDO DO SITE ##########################
+//  SEÇÃO: # 3. FUNÇÕES QUE LIDAM COM O CONTEÚDO DO SITE ##########################
 
 /**
  * Esta é a função que cuida de exibir um único item na tela. O `return` envia
  * um "texto interpolado": Quando criamos um texto com crase (`) ao invés de áspas
- * simples ou duplas, podemos inserir `variáveis` e `expressões` no meio do texto:
+ * simples ou duplas, podemos inserir `variáveis` e `expressões` no meio do texto.
+ * Vamos conferir como as duas variáveis abaixo serão usadas no meio do texto:
  *
  * let exemplo = 123
  * let expressao = 456 - exemplo
@@ -178,11 +186,11 @@ let idItemEditado = null;
  * texto na posição do ${}:
  *
  * `O valor de exemplo é ${exemplo}`
- * vira
+ * se torna:
  * "O valor de exemplo é 123"
  *
  * `O valor da expressão é ${expressao}`
- * vira
+ * se torna:
  * "O valor da expressão é 333" (resultado de 456 - 123)
  *
  * Também poderíamos fazer diretamente assim:
@@ -194,7 +202,7 @@ let idItemEditado = null;
  * ser transformado em um elemento na página.
  */
 function mostrarItem(item) {
-  /** HINT: Algumas das "interpolações" no texto abaixo são apenas para fins de
+  /** DICA: Algumas das "interpolações" no texto abaixo são apenas para fins de
    *  adicionar comentários no meio do código */
   return `
     <div 
@@ -327,7 +335,7 @@ function esconderCarregamento() {
 
 
 
-//  INFO: # 4. FUNÇÕES QUE LIDAM COM O COMPORTAMENTO DO SITE #####################
+//  SEÇÃO: # 4. FUNÇÕES QUE LIDAM COM O COMPORTAMENTO DO SITE #####################
 
 /**
   * Apaga todo o conteúdo preenchido no formulário, deixando todos os campos
@@ -377,7 +385,7 @@ async function adicionarItem(dadosItem) {
 }
 
 /**
-  * WARN: Modifiquei esta função da última aula para cá, para melhorar o
+  * AVISO: Modifiquei esta função da última aula para cá, para melhorar o
   *       funcionamento, fazer mais uso de nossa classe e diminuir a repetição.
   *
   * Esta função, assim como a de cima, também é assíncrona e faz diversas coisas,
@@ -575,6 +583,10 @@ async function removerItem(id) {
     mostrarErro("Falha em remover item: " + erro.message)
   }
 }
+
+
+
+//  SEÇÃO: # 5. COMPORTAMENTO INICIAL DO SITE #####################################
 
 /**
   * A função `inicializar` abaixo realiza algumas configurações finais em alguns
