@@ -1,4 +1,4 @@
-//  INFO: #### SOBRE ESTE ARQUIVO ################################################
+//  INFO: # 0. SOBRE ESTE ARQUIVO ################################################
 
 /**
  * @author Victor Cavalcanti (www.github.com/VicCAlq) <victor.mca.dev@gmail.com>
@@ -9,6 +9,9 @@
  * Vocês encontrarão diversos comentários como este ao longo do código explicando 
  * cada parte. Leiam com atenção e no seu tempo.
  *
+ *  Este arquivo tem mais comentários explicativos que código, então não se
+ *  assustem com a quantidade de linhas: O código em si é simples.
+ *
  * Os comentários explicativos são direcionados a alunos do ensino médio.
  * A linguagem busca ser o menos técnica o possível, portanto algumas das
  * explicações são superficiais, ou usam analogias imperfeitas.
@@ -18,11 +21,12 @@
 
 
 
-//  INFO: #### SETUP (configuração inicial) ######################################
+//  INFO: # 1. SETUP (configuração inicial) ######################################
 
 /**
- * As quatro linhas abaixo carregam algumas ferramentas e bibliotecas necessárias
- * e as armazenam em variáveis para que possamos utilizá-las ap longo do código:
+ * As quatro linhas abaixo carregam no programa algumas ferramentas e bibliotecas 
+ * necessárias e as armazenam em variáveis para que possamos utilizá-las ao longo 
+ * do código:
  *
  * `express`: "Framework" (conjunto de ferramentas) para a criação do Servidor
  * `sqlite3`: Interface que permite acessar o banco de dados via JavaScript
@@ -35,18 +39,20 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const cors = require('cors');
+
+/** Nesta linha estamos apenas importando o classe Database */
 const { Database } = require('sqlite3');
 
-/** Aqui criamos o nosso servidor "de fato" com o "express" e atribuímos a 
- * variável "app" para ele */
+/** Aqui criamos o nosso servidor "de fato" com o `express` e atribuímos a 
+ * variável `app` para ele */
 const app = express();
-/** Configuramos a "porta" onde o cliente/frontend deve se conectar.
+/** Configuramos a `porta` onde o cliente/frontend deve se conectar.
  *  Ela corresponde ao número que vem após `http://localhost:` */
 const PORTA = process.env.PORT || 3000;
 
 /**
  * Nas três linhas abaixo nós inicializamos algumas configurações utilizadas
- * pelo nosso servidor "express". Especificamente, realizamos o "cadastro" de
+ * pelo nosso servidor `express`. Especificamente, realizamos o "cadastro" de
  * algumas ferramentas, também chamadas de "Middleware" (ferramentas do meio).
  * São assim chamadas por que atuam "no meio" da execução de alguma requisição.
  *
@@ -56,11 +62,11 @@ const PORTA = process.env.PORT || 3000;
  * disponíveis e serão usadas para todas as requisições.
  */
 /** `cors`: Ferramenta que permite que o cliente acesse recursos do servidor.
- *          É a mesma que importamos anteriormente */
+ *          É a mesma variável que importamos anteriormente */
 app.use(cors());
 /** `express.json`: Habilita a conversão de dados e valores para o formato 
  *                  JSON (JavaScript Object Notation), que corresponde a 
- *                  objetos JavaScript */
+ *                  objetos na linguagem JavaScript */
 app.use(express.json());
 /** `express.static`: Configura o servidor para enviar arquivos "estáticos".
  *                    Estes arquivos são os nossos HTML, CSS e JS do cliente*/
@@ -70,7 +76,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-//  INFO: #### BANCO DE DADOS ####################################################
+//  INFO: # 2. BANCO DE DADOS ####################################################
 
 /**
  * Aqui nós criamos um banco de dados utilizando a ferramenta `sqlite3` que
@@ -120,8 +126,8 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
      *
      * `id`: Coluna obrigatória. Registra a ordem de itens inseridos no banco.
      *
-     * As outras colunas devem ser criadas de acordo com o tema da biblioteca.
-     * No exemplo abaixo são:
+     * As outras colunas devem ser criadas de acordo com o tema de sua 
+     * biblioteca. No exemplo abaixo são:
      *
      * `nome`: Valor texto, nome do personagem.
      * `vida`: Valor numérico inteiro, são os pontos de vida do personagem.
@@ -130,28 +136,33 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
      * `ataque`: Valor numérico inteiro, dano do ataque.
      * `defesa`: Valor numérico real, multiplicador de defesa.
      * `ativo`: Valor booleano (verdadeiro/falso). Se está ativo no grupo.
+     * `desempenho`: Valor numérico real, representa o quão bom é o personagem.
+     * `descricao`: Valor texto, descreve como o personagem funciona.
+     * `melhorEquipe`: Valor texto, lista JSON dos melhores parceiros de equipe.
      * `dataDeEntrada`: Valor texto, data em que entrou no grupo.
      *
      * Todas as colunas são criadas da mesma forma:
-     * `nome_da_coluna TIPO PROPRIEDADES`
+     * `nome_da_coluna TIPO_DA_COLUNA PROPRIEDADES_DA_COLUNA`
      *
-     * O nome das colunas devem corresponder ao nome das propriedades dos objetos
-     * criados pela classe na sua aplicação frontend.
+     * Os nomes das colunas devem corresponder ao nome das propriedades dos 
+     * objetos criados pela classe na sua aplicação frontend.
      *
      * Os tipos das colunas que veremos são:
      * `TEXT`: Texto simples
-     * `VARCHAR(número)`: Texto simples com tamanho limitado
-     * `INTEER`: Número inteiro
+     * `VARCHAR(número)`: Texto simples com quantidade limitada de caracteres
+     * `INTEGER`: Número inteiro
      * `FLOAT`: Número real (com casa decimal)
      * `BOOLEAN`: Valor booleano (verdadeiro/falso)
      *
      * E as propriedades que usaremos são:
-     * `NOT NULL`: Valor obrigatório.
+     * `NOT NULL`: Indica que o valor é obrigatório, não pode ficar em branco.
+     *
+     * Existem outros tipos e propriedades, mas SQL não é o foco desta atividade.
      *
      * Após lerem as instruções acima, façam o pedido abaixo:
-     * NOTE: Editem as propriedades dentro da instrução "db.run" para 
-     * corresponderem as propriedades da classe que vocês criaram no frontend.
-     * Modifiquem as colunas entre as linhas com o texto "FIX".
+     * NOTE: Atividade - Editem as propriedades dentro da instrução "db.run" 
+     * para corresponderem as propriedades da classe que vocês criaram no 
+     * frontend. Modifiquem as colunas entre as linhas com o texto "FIX".
      */
     db.run(`CREATE TABLE IF NOT EXISTS Biblioteca (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -163,6 +174,9 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
       ataque INTEGER,
       defesa FLOAT,
       ativo BOOLEAN,
+      desempenho FLOAT,
+      descricao TEXT,
+      melhorEquipe TEXT,
       dataDeEntrada VARCHAR(100)
       ${""/* FIX: Até aqui. A última linha NÃO PODE terminar com vírgula */}
     )`, (erro) => {
@@ -175,7 +189,7 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
        * - O segundo é mais uma `função anônima` que recebe um `erro`.
        *
        * Essa função anônima existe justamente para tratarmos algum erro
-       * que psosa ocorrer nessa etapa:
+       * que possa ocorrer nessa etapa:
        */
       if (erro) {
         console.error('Erro ao criar a tabela "Biblioteca"', erro.message);
@@ -190,7 +204,7 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
 
 
 
-//  INFO: #### CRIAÇÃO DAS ROTAS #################################################
+//  INFO: # 3. CRIAÇÃO DAS ROTAS #################################################
 
 /**
   * WARN: Uma descrição básica do que são as rotas:
@@ -202,29 +216,31 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
   * 
   * As rotas em geral consistem de três partes principais:
   *
-  * - Um `verbo/método HTTP`: Representa o `tipo` da comunicação, ou da operação
-  *                           realizada entre o cliente e o servidor. Comumente
+  * 1 Um `verbo/método HTTP`: Representa o `tipo` da comunicação, ou da operação
+  *                           realizada entre o cliente e o servidor. Normalmente
   *                           trabalhamos com os quatro tipos abaixo, apesar de 
   *                           não serem os únicos:
-  *     1. `GET`: Método onde o cliente solicita dados para o servidor.
-  *               É equivalente a operação `READ` (ler)
-  *     2. `POST`: Método onde o cliente envia um dado novo para o servidor.
-  *                É equivalente a operação `CREATE` (criar)
-  *     3. `PUT`: Método onde o cliente envia para o servidor uma informação
-  *               nova que deve substituir uma informação anterior.
-  *               É equivalente a operação `UPDATE` (atualizar)
-  *     4. `DELETE`: Método onde o cliente solicita ao servidor que uma
-  *                  informação seja apagada. Mantém o mesmo nome no CRUD.
-  * - Um `endereço`: Corresponde a parte do endereço do site que vem após
+  *     - `GET`: Método onde o cliente solicita informações para o servidor.
+  *              É equivalente a operação `READ` (ler)
+  *     - `POST`: Método onde o cliente envia um dado novo para o servidor.
+  *               É equivalente a operação `CREATE` (criar)
+  *     - `PUT`: Método onde o cliente envia para o servidor uma informação
+  *              nova que deve substituir uma informação anterior.
+  *              É equivalente a operação `UPDATE` (atualizar)
+  *     - `DELETE`: Método onde o cliente solicita ao servidor que uma
+  *                 informação seja apagada. Mantém o mesmo nome no CRUD.
+  * 2 Um `endereço`: Corresponde a parte do endereço do site que vem após
   *                  o endereço base (No nosso caso, o que vem depois de
   *                  `localhost:3000/`)
-  * - Uma `instrução`: Dita o que fazer quando o endereço é acessado com o método
+  * 3 Uma `instrução`: Dita o que fazer quando o endereço é acessado com o método
   *                  descrito. Em servidores `express`, se trata de uma `função
   *                  anônima`, que recebe os argumentos `req` (requisição) e 
   *                  `res` (resposta).
   *
   * Em aplicações `express`, as rotas são criadas da seguinte maneira:
   * `app.metodo('endereço', (req, res) => { instruções } )`
+  * Onde "metodo", "endereço" e "instruções" vão ser modificados
+  * de acordo com a forma como você deseja configurar a rota
   *
   * Lembrando que `app` é a variável onde armazenamos o nosso servidor.
   *
@@ -267,11 +283,16 @@ app.get('/api/biblioteca', (req, res) => {
    *               Neste caso como não precisamos de nenhum parâmetro, enviamos
    *               uma lista vazia.
    * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
-   *                  resultado ou com o possível erro.
+   *                  resultado ou com o possível erro. Esta função anônima
+   *                  contém os argumentos "erro" e "linhasDaTabela". Normalmente
+   *                  os nomes para estes argumentos são `err` e `rows`, mas aqui
+   *                  deixei em português para facilitar a compreensão.
+   *                  Estes argumentos são utilizados para tratar possíveis erros
+   *                  e para enviar o resultado para o cliente, respectivamente.
    */
-  db.all(sql, [], (erro, rows) => {
+  db.all(sql, [], (erro, linhasDaTabela) => {
     /** GOTO: erro_400
-     * Neste bloco "if-else" abaixo tratamos o erro:
+     * Neste bloco "if-else" abaixo tratamos um possível erro da seguinte forma:
      * `res.status(400).json({ error: erro.message })` consiste de duas 
      * instruções executadas em sequência, ambas enviadas como para o cliente
      * como `resultado` da requisição:
@@ -302,7 +323,7 @@ app.get('/api/biblioteca', (req, res) => {
      */
     res.json({
       message: 'success',
-      data: rows
+      data: linhasDaTabela
     });
   });
 }); /** WARN: Final da função anônima da rota de pedido de todos os itens */
@@ -364,7 +385,7 @@ app.get('/api/biblioteca/:id', (req, res) => {
    * - Uma instrução: Uma função anônima que vai dizer o que fazer com o 
    *                  resultado ou com o possível erro.
    */
-  db.get(sql, params, (erro, row) => {
+  db.get(sql, params, (erro, linhaDaTabela) => {
     /** Exatamente a mesma verificação de erro desta seção da rota anterior.
      * Pesquise por "erro_400" para localizar a descrição deste erro. */
     if (erro) {
@@ -377,14 +398,14 @@ app.get('/api/biblioteca/:id', (req, res) => {
      * `404` é o código usado para quando algo não é encontrado, neste caso,
      * não foi encontrado nenhum item com o ID informado pelo cliente.
      */
-    if (!row) {
+    if (!linhaDaTabela) {
       res.status(404).json({ error: 'Item não encontrado' });
       return;
     }
     /** Pesquise por "sucesso_get" aqui no código para encontrar a descrição. */
     res.json({
       message: 'success',
-      data: row
+      data: linhaDaTabela
     });
   });
 }); /** WARN: Final da função anônima da rota de pedido de um único item */
@@ -422,12 +443,15 @@ app.post('/api/biblioteca', (req, res) => {
     ataque,
     defesa,
     ativo,
+    desempenho,
+    descricao,
+    melhorEquipe,
     dataDeEntrada
     // FIX: Até esta última linha acima.
   } = req.body;
 
   /** Pequena verificação de erro para que o servidor exija que o valor 
-   * para a propriedade "nome" não seja nulo*/
+   * para a propriedade "nome" não seja nulo */
   if (!nome) {
     /** Pesquise por "erro_400" para a descrição deste tipo de erro*/
     return res.status(400).json({ error: 'O nome é obrigatório' });
@@ -457,9 +481,16 @@ app.post('/api/biblioteca', (req, res) => {
     ataque,
     defesa,
     ativo,
+    desempenho,
+    descricao,
+    melhorEquipe,
     dataDeEntrada
   ${""/* FIX: Até aqui. A última linha NÃO PODE terminar com vírgula */}
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  /**  FIX: E edite a linha acima modificando a quantidade de interrogações
+   *   para corresponder a quantidade de propriedades da classe de seu frontend.
+   *   A última interrogação NÃO PODE ter uma vírgula depois dela.
+   */
 
   /** Lista contendo os valores que entrarão no lugar das interrogações
    * quando o comando SQL acima for executado
@@ -476,13 +507,16 @@ app.post('/api/biblioteca', (req, res) => {
     ataque,
     defesa,
     ativo,
+    desempenho,
+    descricao,
+    melhorEquipe,
     dataDeEntrada
     // FIX: Até esta última linha acima.
   ];
 
   /** GOTO: db_run
    * O método `run()` do banco de dados executa um comando SQL mas não retorna
-   * nenhum dado, apenas um "apontador" para o próprio banco de dados para caso
+   * nenhum dado, apenas uma "referência" para o próprio banco de dados para caso
    * seja de nosso interesse anexar mais comandos na sequência.
    *
    * Assim como o método `all()` e `get()`, `run()` requer os argumentos:
@@ -525,7 +559,7 @@ app.post('/api/biblioteca', (req, res) => {
   * Abaixo fica a quarta rota: Utilizamos o método `PUT` no endereço
   * `/api/biblioteca/numero_do_id` e nas instruções da função anônima dizemos
   * como o servidor deve tratar essa solicitação. A função principal aqui é a
-  * de receber um Item enviado pelo cliente, e então usar as informações deste
+  * de receber um item enviado pelo cliente, e então usar as informações deste
   * item para atualizar um item já existente no banco de dados.
   */
 app.put('/api/biblioteca/:id', (req, res) => {
@@ -550,6 +584,9 @@ app.put('/api/biblioteca/:id', (req, res) => {
     ataque,
     defesa,
     ativo,
+    desempenho,
+    descricao,
+    melhorEquipe,
     dataDeEntrada
     // FIX: Até esta última linha acima.
   } = req.body;
@@ -564,9 +601,9 @@ app.put('/api/biblioteca/:id', (req, res) => {
    *
    * Traduzindo as instruções (não o inglês) temos:
    *
-   * "Na tabela Biblioteca, insira nas colunas a seguir ( lista de colunas )
-   * os valores (lista de valores na mesma ordem que a lista de colunas)
-   * APENAS para o item que tenha o ID igual ao valor informado."
+   * "Na tabela Biblioteca, atualize as colunas listadas de acordo com os 
+   * valores informados, mas APENAS para o item que tenha o ID igual ao 
+   * valor do ID informado."
    *
    * NOTE: Editem os nomes das variáveis criadas abaixo para corresponderem
    * aos nomes das propriedades da classe criada no frontend.
@@ -580,9 +617,13 @@ app.put('/api/biblioteca/:id', (req, res) => {
     ataque = ?,
     defesa = ?,
     ativo = ?,
+    desempenho = ?,
+    descricao = ?,
+    melhorEquipe = ?,
     dataDeEntrada = ?,
-    ${""/* FIX: Apenas até a linha acima. */}
+    ${""/* FIX: Apenas até a linha acima. Mantenha a vírgula na últina linha */}
     WHERE id = ?`;
+
   /** Lista contendo os valores que entrarão no lugar das interrogações
    * quando o comando SQL acima for executado
    *
@@ -598,6 +639,9 @@ app.put('/api/biblioteca/:id', (req, res) => {
     ataque,
     defesa,
     ativo,
+    desempenho,
+    descricao,
+    melhorEquipe,
     dataDeEntrada,
     // FIX: Até esta última linha acima. A linha abaixo permanece como está.
     req.params.id
@@ -712,7 +756,7 @@ app.delete('/api/biblioteca/:id', (req, res) => {
 
 
 
-//  INFO: #### INSTRUÇÕES FINAIS #################################################
+//  INFO: # 4. INSTRUÇÕES FINAIS #################################################
 
 
 /**
@@ -760,9 +804,9 @@ app.use((req, res) => {
 });
 
 
-/** Comando que "liga" o servidor e o faz responder a porta `3000`
- * da máquina onde ele estiver rodando, e exibe no terminal uma mensagem
- * com o link para o cliente. */
+/** Comando que "liga" o servidor e o faz responder a porta `3000` (a variável
+ * que criamos logo após a classe) da máquina onde ele estiver rodando, e exibe 
+ * no terminal uma mensagem com o link para o cliente. */
 app.listen(PORTA, () => {
   console.log(`Servidor executando com sucesso no endereço http://localhost:${PORTA}`);
 });
@@ -781,4 +825,6 @@ process.on('SIGINT', () => {
 });
 
 
-/** INFO: Fim do arquivo! */
+/** INFO: Fim do arquivo! Você encontra uma versão do servidor sem os comentários
+ *  no arquivo `server_sem_comentarios.js`. Ele não tem nem 1/3 da quantidade
+ *  de linhas deste arquivo aqui, pode ver que é super simples 🙂 */

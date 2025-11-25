@@ -1,4 +1,4 @@
-//  INFO: #### SOBRE ESTE ARQUIVO ################################################
+//  INFO: # 0. SOBRE ESTE ARQUIVO ################################################
 
 /**
  * @author Victor Cavalcanti (www.github.com/VicCAlq) <victor.mca.dev@gmail.com>
@@ -14,55 +14,228 @@
  * explicações são superficiais, ou usam analogias imperfeitas.
  */
 
-class Jogo {
+
+
+//  INFO: # 1. CLASSE DOS ITENS DA BIBLIOTECA ####################################
+
+/**
+ * @class Personagem
+ *
+ * Esta é a classe criada para representar os objetos que desejamos armazenar
+ * no banco de dados, que por sua vez é gerenciado pelo servidor.
+ *
+ * Neste exemplo, temos uma classe para criação de personagens, que contém as
+ * propriedades a seguir:
+ *
+ * `nome`: Nome do personagem. Texto simples.
+ * `vida`: Pontos de vida. Número inteiro.
+ * `classe`: Classe do personagem. Texto simples.
+ * `nivel`: Nível do personagem. Número inteiro.
+ * `ataque`: Ataque do personagem. Número inteiro.
+ * `defesa`: Multiplicador de defesa do personagem. Número com casa decimal.
+ * `ativo`: Valor para se o personagem está ativo ou não. Verdadeiro/Falso
+ * `dataDeEntrada`: Data de quando o personagem foi adquirido. Objeto Date.
+ */
+class Personagem {
+  /** Aqui no constructor colocamos as propriedades exigidas no preenchimento
+   * de informações do personagem */
   constructor(
     nome, 
-    anoLancamento, 
-    desenvolvedor, 
-    plataforma, 
-    genero, 
-    jogadores, 
-    jogadoresRegistrados
+    vida,
+    classe,
+    nivel,
+    ataque,
+    defesa,
+    ativo,
+    dataDeEntrada
   ) {
-    this.nome = nome
-    this.anoLancamento = anoLancamento || 0
-    this.desenvolvedor = desenvolvedor || "Desconhecido"
-    this.plataforma = plataforma || "Não informado"
-    this.genero = genero || "Não informado"
-    this.jogadores = jogadores || 1
-    this.jogadoresRegistrados = jogadoresRegistrados || "Sem jogadores cadastrados"
+    /** A sintaxe "variável || outro_valor" significa que caso a variável possua
+     * um valor nulo ou indefinido (`null` ou `undefined`), o valor após a `||`
+     * deve ser usado no lugar. Com isso, podemos escolher valores "padrão" para
+     * as propriedades.
+     *
+     * No exemplo de `nome`, se no constructor eu não passar nenhum valor para
+     * o nome, o valor preenchido será `Sem nome` */
+    this.nome = nome || "Sem nome" 
+    this.vida = vida || 100
+    this.classe = classe || "Sem classe"
+    this.nivel = nivel || 1
+    this.ataque = ataque || 10
+    this.defesa = defesa || 10
+    this.ativo = ativo || false
+    /** O comando `new Date()` cria um objeto de data a partir da data atual 
+     * usando a classe `Date`. Para criar a partir de uma data específica, 
+     * informamos como um texto dentro dos parênteses assim:
+     * `new Date("2023-11-18")`
+     * Sempre na ordem de "Ano-Mês-Dia". Também é possível informar um horário
+     * específico, mas fica a cargo de você pesquisar como. Não será exigido
+     * neste exercício. */
+    this.dataDeEntrada = dataDeEntrada || new Date()
+    /** Estas três propriedades abaixo não foram solicitadas no constructor:
+     * Neste caso, é por que eu escolhi que todos os personagens criados vão
+     * ter estas propriedades preenchidas desta forma por padrão. */
+    this.desempenho = null
+    this.descricao = null
+    this.melhorEquipe = []
   }
   
-  tempoDeLancamento(anoAtual) {
-    return anoAtual - this.anoLancamento
+  /** Aqui temos nosso primeiro método: Um método para calcular há quantos dias
+   * o personagem foi adquirido (seja completando missão para habilitar ele,
+   * conseguindo em gacha, comprando com recursos do jogo, etc).
+   *
+   * A constante `divisorMilisegundos` é utilizada por que quando subtraímos
+   * um objeto de `Date` do outro (para saber a diferença de tempo entre as duas
+   * datas), esta conta é feita sempre em milisegundos. Por isso dividimos a
+   * quantidade de milisegundos do resultado desta conta pela quantidade de
+   * milisegundos em um dia (O valor da variável `divisorMilisegundos`).
+   */
+  tempoDesdeAquisicao() {
+    /** Quantidade de milisegundos em um dia */
+    const divisorMilisegundos = 24*60*60*1000
+    /** Data atual menos a data de aquisição do personagem */
+    let tempoDesdeAquisicao = new Date() - this.dataDeEntrada
+    /** Usamos `Math.floor()` para arredondar o número de 
+     * dias removendo casas decimais */
+    tempoDesdeAquisicao = Math.floor(tempoDesdeAquisicao / divisorMilisegundos)
+    /** Entregamos o resultado da conta toda aqui */
+    return tempoDesdeAquisicao
   }
-  avaliar(nota) {
-    this.nota = nota
+
+  /** Atribui uma nota para o desempenho do personagem, de 0 a 10 */
+  avaliar(desempenho) {
+    /** Aqui decidi usar `switch/case` ao invés de `if/else` apenas para fins
+     * de demonstração de como funciona em comparação ao if/else */
+    switch (desempenho) {
+      case desempenho < 0:
+        this.desempenho = 0
+        break;
+      case desempenho > 10:
+        this.desempenho = 10
+        break;
+      default:
+        this.desempenho = desempenho
+        break;
+    }
   }
+
+  /** Atribui uma descrição para o personagem */
   descrever(descricao) {
-    if (descricao.length < 100) {
-      console.log("A descrição deve ter pelo menos 100 caracteres")
+    if (descricao.length < 20) {
+      window.alert("A descrição deve ter pelo menos 20 caracteres")
     } else {
       this.descricao = descricao
     }
   }
-  // Método a escolha de vocês!
-  cadastrarJogadores(jogador) {
-    this.jogadores = this.jogadores || []
-    this.jogadores.push(jogador)
+
+  /** Este é um método para listar outros personagens que funcionam bem com este,
+   * e então armazenamos estes nomes em uma lista */
+  adicionarEquipe(personagem) {
+      this.melhorEquipe = this.melhorEquipe || []
+      this.melhorEquipe.push(personagem)
   }
 }
 
+
+
+//  INFO: # 2. CONSTANTES ESSENCIAIS PARA O SITE #################################
+
+/** Estas variáveis abaixo serão utilizadas diversas vezes ao longo de nossa
+ * aplicação, portanto já as definimos aqui:
+ *
+ * - ENDERECO_BASE: É o endereço por onde nosso aplicativo se comunica com o
+ *                  servidor, que no arquivo do servidor foi definido como
+ *                  `/api/biblioteca`
+ * - biblioteca: Corresponde a `div` com o ID `main` no nosso HTML. É onde vamos
+ *               jogar os itens de nossa biblioteca para serem exibidor.
+ * - bibliotecaItens: É uma lista que começa vazia, mas é onde os itens da
+ *                    biblioteca que recebemos do servidor serão armazenados
+ *                    antes de serem exibidos na biblioteca.
+ * - formulario: Corresponde ao elemento `form` em nosso HTML, ao qual
+ *               associamos o ID `formulario`.
+ * - idItemEditado: Quando estivermos editando algum item da biblioteca (que 
+ *                  implementaremos futuramente), o ID deste item será armazenado
+ *                  nesta variável.
+ */
+const ENDERECO_BASE = "/api/biblioteca"
+const biblioteca = document.getElementById("main");
+const bibliotecaItens = [] // Colchetes vazios
+const formulario = document.getElementById("formulario");
+let idItemEditado = null;
+
+
+
+//  INFO: # 3. FUNÇÕES QUE LIDAM COM O CONTEÚDO DO SITE ##########################
+
+/**
+ * Esta é a função que cuida de exibir um único item na tela. O `return` envia
+ * um "texto interpolado": Quando criamos um texto com crase (`) ao invés de áspas
+ * simples ou duplas, podemos inserir `variáveis` e `expressões` no meio do texto:
+ *
+ * let exemplo = 123
+ * let expressao = 456 - exemplo
+ *
+ * Nos textos abaixo, o que está dentro do ${} é computado e jogado dentro do
+ * texto na posição do ${}:
+ *
+ * `O valor de exemplo é ${exemplo}`
+ * vira
+ * "O valor de exemplo é 123"
+ *
+ * `O valor da expressão é ${expressao}`
+ * vira
+ * "O valor da expressão é 333" (resultado de 456 - 123)
+ *
+ * Também poderíamos fazer diretamente assim:
+ * `O valor da expressão é ${456 - exemplo}`
+ * E o resultado seria o mesmo.
+ *
+ * Esta função "mostrarItem" vai retornar conteúdo HTML escrito como texto comum
+ * aqui no JavaScript, mas quando for posicionado no HTML por outra função, vai
+ * ser transformado em um elemento na página.
+ */
 function mostrarItem(item) {
+  /** HINT: Algumas das "interpolações" no texto abaixo são apenas para fins de
+   *  adicionar comentários no meio do código */
   return `
-    <div style="border: 2px gold solid; padding: 10px 30px; margin: 10px 0; border-radius: 20px;">
-      <p>Nome do jogo: ${item.nome}</p>
-      <p>Ano de Lançamento: ${item.ano_lancamento}</p>
-      <p>Desenvolvedor: ${item.desenvolvedor}</p>
-      <p>Gênero: ${item.genero}</p>
-      <p>Plataforma: ${item.plataforma}</p>
-      <p>Quantidade de Jogadores: ${item.jogadores}</p>
-      <p>Jogadores Registrados: ${item.jogadores_registrados}</p>
+    <div 
+      style="
+        border: 2px gold solid; 
+        padding: 10px 30px; 
+        margin: 10px 0; 
+        border-radius: 20px;
+      "
+    >
+      <p>Nome: ${item.nome}</p>
+      <p>Data de aquisição: ${item.ano_lancamento}</p>
+      ${"" /** Na linha abaixo, tempoDesdeAquisicao precisa dos parênteses para
+      que o valor da função seja calculado. */}
+      <p>Tempo desde aquisição: ${item.tempoDesdeAquisicao()}</p>
+      <p>Classe: ${item.classe}</p>
+      <p>Nível: ${item.nivel}</p>
+      <p>Vida total: ${item.vida}</p>
+      <p>Ataque: ${item.ataque}</p>
+      <p>Defesa: ${item.defesa}</p>
+      <p>Ativo/a: ${item.ativo ? "<p>Sim</p>" : "<p>Não</p>"}</p>
+      ${/** A sintaxe abaixo de "variavel ? resultado_1 : resultado_2 é 
+         * similar a um "if/else", mas ao invés de ser um "bloco de código" como
+         * o "if/else", se trata de uma expressão, e portanto podemos utilizar 
+         * no meio de textos usando ${}
+         *
+         * Na linha onde temos ${item.desempenho ? valor_1 : valor_2}, o que 
+         * o código quer dizer é: "se item.desempenho não for um valor nulo, 
+         * exiba o que vem entre ? e :, senão exiba o que vem depois do : " */""}
+      ${item.desempenho // Se item.desempenho NÃO for nulo...
+        ? "<p>Desempenho: " + item.desempenho + "</p>" //...Exiba isso
+        : null // Senão, se item.desempenho FOR nulo, não exiba nada.
+      }
+      ${item.melhorEquipe // Se item.melhorEquipe NÃO for nulo
+        ? "<p>Melhores sinergias: " + item.melhorEquipe + "</p>" //...Exiba isso
+        : null // Senão, se item.desempenho FOR nulo, não exiba nada.
+      }
+      ${item.descricao // E aqui você já deve saber como funciona 🙂
+        ? "<p>Descrição: " + item.descricao + "</p>" 
+        : null 
+      }
       <div style="display: flex; flex-direction: row;">
         <button 
           id="deletar-${item.id}"
@@ -74,54 +247,237 @@ function mostrarItem(item) {
   `
 }
 
-const ENDERECO_BASE = "/api/biblioteca"
-const biblioteca = document.getElementById("main");
-const bibliotecaItens = [] // Colchetes vazios
-const formulario = document.getElementById("formulario");
-let idItemEditado = null;
+/**
+ * Esta função recebe no argumento "itens" uma lista dos itens da biblioteca
+ * (que são adquiridos em outra função mais abaixo). `mostrarBiblioteca` por sua
+ * vez vai:
+ *
+ * 1. Criar uma variável que vai armazenar conteúdo HTML (`listaDeItens`)
+ * 2. Percorrer esta lista, e para cada item dela vai chamar a função
+ *    `mostrarItem` escrita acima.
+ * 3. Adicionar na variável `listaDeItens` o resultado de cada vez que 
+ *    `mostrarItem` é chamado.
+ * 4. Adicionar todo o conteúdo HTML gerado nos passos anteriores na `div main`
+ *    de nossa biblioteca, oonde os itens de nossa biblioteca são exibidos.
+ */
+function mostrarBiblioteca(itens) {
+  esconderCarregamento()
+  let listaDeItens = ""
 
-function limparFormulario() { formulario.reset() }
+  /** `forEach` é outra forma de fazer um laço de repetição, onde a sintaxe é:
+   * `lista.forEach((itemDaLista) => {
+   *   o_que_fazer_com_cada_item_da_lista
+   * })`
+   *
+   * Neste caso, para cada `item` da lista `itens` recebida como argumento da
+   * função, chamamos a função `mostrarItem` com este item, e o conteúdo HTML
+   * obtido é anexado ao texto `listaDeItens`
+   */
+  itens.forEach((item) => {
+    listaDeItens += mostrarItem(item)
+  })
+  
+  /** Aqui colocamos todo o HTML gerado em `listaDeItens` para dentro da
+   * div da biblioteca que terá nossa lista de itens */
+  biblioteca.innerHTML = listaDeItens
+}
 
+/**
+  * Função que mostra uma mensagem de erro quando ocorre algum erro no cliente
+  * ou no servidor. Ela armazena uma "div" dedicada a exibir mensagens de erro
+  * em uma variável, adiciona o conteúdo da mensagem de erro, e muda a 
+  * propriedade "display" do CSS deste elemento para exibí-lo na tela.
+  *
+  * Após 5 segundos, chama a função `esconderErro` para ocultar 
+  * a mensagem de erro
+  */
+function mostrarErro(mensagemErro) {
+  const divErro = document.getElementById("erro")
+  divErro.textContent = mensagemErro
+  divErro.style.display = "block"
+
+  setTimeout(() => { esconderErro()}, 5000)
+}
+
+/**
+  * Armazena a div dedicada a exibir mensagens de erro em uma variável e muda
+  * a propriedade "display" do CSS dela para "none", ocultando a div.
+  */
+function esconderErro() {
+  document.getElementById("erro").style.display = "none"
+}
+
+/**
+ * Função que modifica o CSS do elemento HTML com o ID "carregamento" para
+ * torná-lo visível, e oculta a div "main" da biblioteca.
+ */
+function mostrarCarregamento() {
+  document.getElementById("carregamento").style.display = "block"
+  biblioteca.style.display = "none"
+}
+
+/**
+ * Função que modifica o CSS do elemento HTML com o ID "carregamento" para
+ * ocultá-lo, e exibe a div "main" da biblioteca como um grid de itens.
+ */
+function esconderCarregamento() {
+  document.getElementById("carregamento").style.display = "none"
+  biblioteca.style.display = "grid"
+}
+
+
+
+//  INFO: # 4. FUNÇÕES QUE LIDAM COM O COMPORTAMENTO DO SITE #####################
+
+/**
+  * Apaga todo o conteúdo preenchido no formulário, deixando todos os campos
+  * em branco
+  */
+function limparFormulario() { 
+  formulario.reset()
+}
+
+/**
+  * Esta é uma função `assíncrona`: significa que a execução dela é realizada em
+  * segundo plano caso alguma outra coisa aconteça enquanto esta função ainda 
+  * não tiver sido finalizada. Esta função faz quatro coisas:
+  *
+  * 1. Envia uma mensagem para o servidor na rota `/api/biblioteca` armazenada
+  *    na variável `ENDERECO_BASE`. O conteúdo desta mensagem é um objeto que
+  *    contém:
+  *    - method: Tipo da mensagem enviada (GET, POST, PUT, DELETE).
+  *    - headers: Formato da mensagem (aqui é um texto no formato JSON).
+  *    - body: O conteúdo da mensagem, que aqui é um texto gerado a partir
+  *            do novo item gerado por nossa classe.
+  * 2. Aguarda a resposta do servidor com o resultado ou uma possível mensagem
+  *    de erro: Por isso usamos o `await` aqui: Estamos `waiting` (aguardando)
+  *    a resposta do servidor.
+  * 3. Verifica se o servidor enviou algum erro.
+  * 4. Limpa o que estava preenchido no formulário e recarrega a lista de itens
+  *    da biblioteca.
+  */
 async function adicionarItem(dadosItem) {
+  /** Aqui fazemos o passo 1 acima */
   const resposta = await fetch(ENDERECO_BASE, {
+    /** O método `POST` é o que envia um novo item para o servidor */
     method: "POST",
     headers: {
       "Content-Type" : "application/json",
     },
+    /** A linha abaixo é a que contém o novo item criado pela nossa classe */
     body: JSON.stringify(dadosItem)
   })
 
+  /** Verificação de erro do passo 3 */
   if (!resposta.ok) { throw new Error("Falha em adicionar item a biblioteca") }
 
+  /** As duas linhas abaixo são o passo 4 */
   limparFormulario()
   carregarItens()
 }
 
+/**
+  * WARN: Modifiquei esta função da última aula para cá, para melhorar o
+  *       funcionamento, fazer mais uso de nossa classe e diminuir a repetição.
+  *
+  * Esta função, assim como a de cima, faz diversas coisas, vamos a uma lista
+  * do que ocorre em cada etapa:
+  *
+  * 1. Armazenamos as informações preenchidas no formulário em uma variável
+  *    chamada `dadosFormulário`, que é um objeto do tipo `FormData` (que contém
+  *    as coisas preenchidas no formulário em um formato "propriedade: valor").
+  * 2. Cria uma lista vazia `propriedadesNovoPersonagem` que vai armazenar os
+  *    valores do formulário para serem usados na criação de um objeto usando
+  *    nossa classe.
+  * 3. Percorre as propriedades do formulário, e adiciona estas propriedades
+  *    na lista do passo anterior.
+  * 4. Cria um objeto usando nossa classe e passando os valores armazenados
+  *    na lista `propriedadesNovoPersonagem`.
+  * 5. Chama a função `adicionarItem` que criamos acima e passsa para ela o
+  *    objeto gerado por nossa classe, para que ele seja enviado para o servidor.
+  * 6. Se o passo 5 acima falhar, mostra uma mensagem de erro.
+  */
 async function enviarFormulario() {
+  /** Aqui criamos o objeto do tipo `FormData` com os dados preenchidos no
+   * formulário. Para acessarmos estes dados, a propriedade `name` PRECISA
+   * estar preenchida no HTML, desta forma:
+   * 
+   * <input type="text" id="input-nome" name="input-nome"/>
+   *                                       ☝️ Esta propriedade é obrigatória 
+   */ 
   const dadosFormulario = new FormData(formulario)
-  const dadosItem = {
-    nome: dadosFormulario.get("input-nome"),
-    ano_lancamento: dadosFormulario.get("input-ano")
-      ? parseInt(dadosFormulario.get("input-ano"))
-      : null,
-    desenvolvedor: dadosFormulario.get("input-desenvolvedor") || null,
-    genero: dadosFormulario.get("input-genero") || null,
-    plataforma: dadosFormulario.get("input-plataforma") || null,
-    jogadores: dadosFormulario.get("input-jogadores")
-      ? parseInt(dadosFormulario.get("input-jogadores"))
-      : null,
-    jogadores_registrados: dadosFormulario.get("input-registrados") || null,
+
+  /** Lista que vai armazenar os valores do formulário */
+  let propriedadesNovoPersonagem = []
+
+  /** Este loop funciona da seguinte forma:
+    *
+    * 1. Para acessarmos a lista de propriedade-valor do formulário, usamos
+    *    o método `entries()` no objeto `dadosFormulario`. Ele entrega uma
+    *    lista de "mini-listas". Estas "mini-listas" são cada uma uma lista
+    *    com dois valores: ["propriedade", "valor"].
+    *    Exemplo:
+    *    `dadosFormulario.entries()` = [
+    *      ["nome", "Belarmino"],
+    *      ["idade", "25"],         --> Note que vem como texto
+    *      ["curso", "Geografia"],
+    *      ["matriculado", "true"]  --> Também vem como texto
+    *    ]
+    * 2. Portanto, ao criarmos a variável que vai acessar cada item da lista,
+    *    ao invés de usarmos `let item`, criamos duas variáveis de uma vez:
+    *    Uma para o input (o campo do formulário) e outra para o valor
+    *    preenchido neste formulário.
+    *    `let [input, valor]` cria as variáaveis `input` e `valor` de uma vez só.
+    * 3. Procuramos por alguns valores específicos (os que não podem ser usados
+    *    como texto, como "quantidade", "idade", "data", etc). Essa busca é
+    *    feita a partir do nome do input (valor da propriedade `name` no HTML)
+    * 4. Se encontramos algum destes inputs do passo 3, convertemos o valor
+    *    que foi preenchido para o tipo que desejamos:
+    *    - parseInt(valor) converte o valor para número inteiro
+    *    - parseFloat(valor) converte o valor para número com casa decimal
+    *    - new Date(valor) cria um objeto de data a partir do valor
+    * 5. Esta conversão é feita APENAS se o valor tiver sido preenchido no
+    *    formulário, para isso usamos a sintaxe:
+    *    valor ? parseInt(valor) : null
+    *    Que é lida da seguinte forma:
+    *    `valor` existe ? Se sim, parseInt(valor): Se não, null
+    * 6. Por fim, anexamos o valor na lista `propriedadesNovoPersonagem`
+    */
+  for (let [input, valor] of dadosFormulario.entries()) {
+    /** Aqui, caso o input contenha a palavra "vida", "nivel" ou "ataque",
+      * converto o valor preenchido neste input para número inteiro */
+    if( input.includes("vida") || input.includes("nivel") || input.includes("ataque")) { 
+      valor = valor ? parseInt(valor) : null 
+    }
+    /** Aqui, caso o input contenha a palavra "defesa", converto o valor 
+     * preenchido neste input para número com casa decimal */
+    if(input.includes("defesa")) { valor = valor ? parseFloat(valor) : null }
+    /** Aqui, caso o input contenha a palavra "entrada", converto o valor 
+     * preenchido neste input para um objeto do tipo `Date` */
+    if(input.includes("entrada")) { valor = valor ? new Date(valor) : null }
+    /** Aqui anexo o valor a lista citada. Se o input não corresponder a nenhum
+      * dos tipos procurados acima, o valor é armazenado do mesmo jeito que veio.
+      * Se ele foi convertido, é armazenado do jeito que foi convertido */ 
+    propriedadesNovoPersonagem.push(valor)
   }
 
-  console.log(dadosItem)
+  /** Aqui criamos nosso novo objeto usando nossa classe com apenas uma linha :D
+   * Esta sintaxe `...lista` significa que estamos "abrindo o conteúdo" desta 
+   * lista, no caso do exemplo abaixo, é equivalente a fazer o seguinte:
+   * new Personagem(
+   *  propriedadesNovoPersonagem[0]
+   *  propriedadesNovoPersonagem[1]
+   *  propriedadesNovoPersonagem[2]
+   *  propriedadesNovoPersonagem[3] ...
+   *  até o último item da lista.
+   * )
+   */
+  const personagem = new Personagem(...propriedadesNovoPersonagem)
 
-  if (!dadosItem.nome.trim()) {
-    mostrarErro("Nomear o item é obrigatório.")
-    return;
-  }
-
+  /** Por fim, executamos os passos 5 e 6 desta função (descrição acima do
+   * nome dela: `enviarFormulario`) */
   try {
-    await adicionarItem(dadosItem)
+    await adicionarItem(personagem)
   } catch (erro) {
     mostrarErro("Falha em adicionar item: " + erro.message)
   }
@@ -144,19 +500,6 @@ async function carregarItens() {
   }
 }
 
-function mostrarBiblioteca(itens) {
-  esconderCarregamento()
-  let listaDeItens = ""
-
-  console.log(itens)
-
-  itens.forEach((item) => {
-    listaDeItens += mostrarItem(item)
-  })
-  
-  biblioteca.innerHTML = listaDeItens
-}
-
 async function removerItem(id) {
   let confirmacao = confirm("Deseja mesmo remover este item?")
   if (!confirmacao) { return }
@@ -172,33 +515,6 @@ async function removerItem(id) {
   } catch (erro) {
     mostrarErro("Falha em remover item: " + erro.message)
   }
-}
-
-/**
-  * @param {string} mensagemErro 
-  */
-function mostrarErro(mensagemErro) {
-  const divErro = document.getElementById("erro")
-  divErro.textContent = mensagemErro
-  divErro.style.display = "block"
-
-  setTimeout(() => { esconderErro()}, 5000)
-}
-
-function esconderErro() {
-  document.getElementById("erro").style.display = "none"
-}
-
-function mostrarCarregamento() {
-  document.getElementById("carregamento").style.display = "block"
-  biblioteca.style.display = "none"
-}
-
-function esconderCarregamento() {
-  document.getElementById("carregamento").style.display = "none"
-  biblioteca.style.display = "grid"
-  biblioteca.style.gridTemplateColumns = "repeat(2, 1fr)"
-  biblioteca.style.gridGap = "0px 20px"
 }
 
 function inicializar() {

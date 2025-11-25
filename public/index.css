@@ -41,3 +41,9 @@
 .titulo-formulario {
   margin: 10px auto 20px 0px;
 }
+
+#main {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0px 20px;
+}
