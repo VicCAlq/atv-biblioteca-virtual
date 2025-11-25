@@ -380,8 +380,8 @@ async function adicionarItem(dadosItem) {
   * WARN: Modifiquei esta função da última aula para cá, para melhorar o
   *       funcionamento, fazer mais uso de nossa classe e diminuir a repetição.
   *
-  * Esta função, assim como a de cima, faz diversas coisas, vamos a uma lista
-  * do que ocorre em cada etapa:
+  * Esta função, assim como a de cima, também é assíncrona e faz diversas coisas,
+  * vamos a uma lista do que ocorre em cada etapa:
   *
   * 1. Armazenamos as informações preenchidas no formulário em uma variável
   *    chamada `dadosFormulário`, que é um objeto do tipo `FormData` (que contém
@@ -403,19 +403,20 @@ async function enviarFormulario() {
    * estar preenchida no HTML, desta forma:
    * 
    * <input type="text" id="input-nome" name="input-nome"/>
-   *                                       ☝️ Esta propriedade é obrigatória 
+   *                                     ^ Esta propriedade é obrigatória!
    */ 
   const dadosFormulario = new FormData(formulario)
 
   /** Lista que vai armazenar os valores do formulário */
   let propriedadesNovoPersonagem = []
 
-  /** Este loop funciona da seguinte forma:
+  /** O loop abaixo funciona da seguinte forma:
     *
     * 1. Para acessarmos a lista de propriedade-valor do formulário, usamos
     *    o método `entries()` no objeto `dadosFormulario`. Ele entrega uma
     *    lista de "mini-listas". Estas "mini-listas" são cada uma uma lista
-    *    com dois valores: ["propriedade", "valor"].
+    *    com dois valores: ["propriedade", "valor"]. Ambos os valores SEMPRE 
+    *    vêm como textos, independente de serem números, booleanos, etc.
     *    Exemplo:
     *    `dadosFormulario.entries()` = [
     *      ["nome", "Belarmino"],
@@ -427,8 +428,8 @@ async function enviarFormulario() {
     *    ao invés de usarmos `let item`, criamos duas variáveis de uma vez:
     *    Uma para o input (o campo do formulário) e outra para o valor
     *    preenchido neste formulário.
-    *    `let [input, valor]` cria as variáaveis `input` e `valor` de uma vez só.
-    * 3. Procuramos por alguns valores específicos (os que não podem ser usados
+    *    `let [input, valor]` cria as variáveis `input` e `valor` de uma vez só.
+    * 3. Procuramos por alguns valores específicos (os que NÃO devem ser usados
     *    como texto, como "quantidade", "idade", "data", etc). Essa busca é
     *    feita a partir do nome do input (valor da propriedade `name` no HTML)
     * 4. Se encontramos algum destes inputs do passo 3, convertemos o valor
@@ -440,35 +441,35 @@ async function enviarFormulario() {
     *    formulário, para isso usamos a sintaxe:
     *    valor ? parseInt(valor) : null
     *    Que é lida da seguinte forma:
-    *    `valor` existe ? Se sim, parseInt(valor): Se não, null
+    *    `valor` existe ? Se sim, converta `valor` para inteiro : Se não, nada
     * 6. Por fim, anexamos o valor na lista `propriedadesNovoPersonagem`
     */
   for (let [input, valor] of dadosFormulario.entries()) {
-    /** Aqui, caso o input contenha a palavra "vida", "nivel" ou "ataque",
+    /** Aqui abaixo, caso o input contenha a palavra "vida", "nivel" ou "ataque",
       * converto o valor preenchido neste input para número inteiro */
     if( input.includes("vida") || input.includes("nivel") || input.includes("ataque")) { 
       valor = valor ? parseInt(valor) : null 
     }
-    /** Aqui, caso o input contenha a palavra "defesa", converto o valor 
+    /** Aqui abaixo, caso o input contenha a palavra "defesa", converto o valor 
      * preenchido neste input para número com casa decimal */
     if(input.includes("defesa")) { valor = valor ? parseFloat(valor) : null }
-    /** Aqui, caso o input contenha a palavra "entrada", converto o valor 
+    /** Aqui abaixo, caso o input contenha a palavra "entrada", converto o valor 
      * preenchido neste input para um objeto do tipo `Date` */
     if(input.includes("entrada")) { valor = valor ? new Date(valor) : null }
-    /** Aqui anexo o valor a lista citada. Se o input não corresponder a nenhum
-      * dos tipos procurados acima, o valor é armazenado do mesmo jeito que veio.
-      * Se ele foi convertido, é armazenado do jeito que foi convertido */ 
+    /** Por fim, anexamos o valor a lista citada. Se o input não corresponder a 
+     * nenhum dos tipos procurados acima, o valor é armazenado do mesmo jeito que
+     * veio. Se ele foi convertido, é armazenado do jeito que foi convertido */ 
     propriedadesNovoPersonagem.push(valor)
   }
 
   /** Aqui criamos nosso novo objeto usando nossa classe com apenas uma linha :D
-   * Esta sintaxe `...lista` significa que estamos "abrindo o conteúdo" desta 
-   * lista, no caso do exemplo abaixo, é equivalente a fazer o seguinte:
+   * Esta sintaxe `...nomeDaLista` significa que estamos "abrindo o conteúdo" 
+   * desta lista, no caso do exemplo abaixo, é equivalente a fazer o seguinte:
    * new Personagem(
-   *  propriedadesNovoPersonagem[0]
-   *  propriedadesNovoPersonagem[1]
-   *  propriedadesNovoPersonagem[2]
-   *  propriedadesNovoPersonagem[3] ...
+   *  propriedadesNovoPersonagem[0],
+   *  propriedadesNovoPersonagem[1],
+   *  propriedadesNovoPersonagem[2],
+   *  propriedadesNovoPersonagem[3], ...
    *  até o último item da lista.
    * )
    */
@@ -483,18 +484,49 @@ async function enviarFormulario() {
   }
 }
 
+/**
+ * A função abaixo, `carregarItens` se comunica com o servidor usando o método
+ * `GET` para pedir o envio de todos os itens da biblioteca armazenados no banco
+ * de dados. Vamos conferir o passo a passo do que ela faz:
+ *
+ * 1. Chamando `mostrarCarregamento`, ela exibe uma mensagem de que está 
+ *    carregando os itens da biblioteca.
+ * 2. Após isso, chama a função que oculta qualquer possível mensagem de erro
+ *    que esteja sendo exibida.
+ * 3. Dentro do bloco de `try-catch`, nós usamos a função `fetch` apenas com o
+ *    endereço base: Quando não passamos um objeto de mensagem, por padrão já é
+ *    inferdo que se trata de uma mensagem de `GET`.
+ * 4. Jogamos o resultado de `await fetch` para uma variável `resposta`.
+ * 5. Conferimos se dentro da resposta consta uma propriedade `ok`. Se ela NÃO
+ *    existir, enviamos um erro.
+ * 6. Se `resposta.ok` existir, convertemos o conteúdo da resposta para o formato
+ *    JSON. Usamos `await` neste caso mesmo sem conexão com o servidor para que
+ *    o aplicativo não fique travado enquanto faz essa conversão.
+ * 7. Após a conversão, enviamos os itens da biblioteca recebidos na variável
+ *    `resposta` para a função `mostrarBiblioteca`, que cuida de exibir os itens
+ *    no nosso site.
+ * 8. No bloco de `catch`, apenas tratamos algum erro em obter os itens da 
+ *    biblioteca.
+ */
 async function carregarItens() {
+  /** Mostramos uma mensagem de carregamento */
   mostrarCarregamento()
+  /** Ocultamos mensagem de erro */
   esconderErro()
 
   try {
+    /** Passos 3 e 4 da descrição acima */
     const resposta = await fetch(ENDERECO_BASE)
+    /** Passo 5 da descrição acima */
     if (!resposta.ok) {
       throw new Error("Falha em receber os itens da biblioteca.")
     }
 
+    /** Passo 6 da descrição acima */
     const resultado = await resposta.json()
+    /** Passo 7 da descrição acima */
     mostrarBiblioteca(resultado.data || [])
+    /** Passo 8 da descrição acima */
   } catch (erro) {
     mostrarErro("Falha em carregar itens da biblioteca: " + erro.message)
   }
