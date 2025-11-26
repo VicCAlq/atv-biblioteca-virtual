@@ -46,13 +46,13 @@ class Personagem {
    * que dependem de preenchimento na hora que o objeto é criado. */
   constructor(
     nome, 
-    vida,
     classe,
+    vida,
     nivel,
     ataque,
     defesa,
-    ativo,
-    dataDeEntrada
+    dataDeEntrada,
+    ativo
   ) {
     /** A sintaxe "variável || outro_valor" significa que caso a variável possua
      * um valor nulo ou indefinido (`null` ou `undefined`), o valor após a `||`
@@ -75,7 +75,7 @@ class Personagem {
      * Sempre na ordem de "Ano-Mês-Dia". Também é possível informar um horário
      * específico, mas fica a seu cargo pesquisar como. Não será exigido
      * neste exercício. */
-    this.dataDeEntrada = dataDeEntrada || new Date()
+    this.dataDeEntrada = new Date(dataDeEntrada) || new Date()
     /** Estas três propriedades abaixo não foram solicitadas no constructor:
      * Neste caso, é por que eu escolhi que todos os personagens criados vão
      * ter estas propriedades preenchidas desta forma por padrão. */
@@ -174,9 +174,10 @@ let idItemEditado = null;
 //  SEÇÃO: # 3. FUNÇÕES QUE LIDAM COM O CONTEÚDO DO SITE ##########################
 
 /**
- * Esta é a função que cuida de exibir um único item na tela. O `return` envia
- * um "texto interpolado": Quando criamos um texto com crase (`) ao invés de áspas
- * simples ou duplas, podemos inserir `variáveis` e `expressões` no meio do texto.
+ * Esta é a função que cuida de exibir um único item na tela. O `return` no final 
+ * da função envia um "texto interpolado": Quando criamos um texto com crase (`) 
+ * ao invés de áspas simples ou duplas, podemos inserir `variáveis` e `expressões` 
+ * no meio do texto. 
  * Vamos conferir como as duas variáveis abaixo serão usadas no meio do texto:
  *
  * let exemplo = 123
@@ -204,6 +205,52 @@ let idItemEditado = null;
 function mostrarItem(item) {
   /** DICA: Algumas das "interpolações" no texto abaixo são apenas para fins de
    *  adicionar comentários no meio do código */
+
+  /** Inicialmente, pegamos as propriedades do item recebido pela função (se
+   * trata dos itens enviados pelo servidor que estão armazenados no banco
+   * de dados), e re-criamos o objeto utilizando a classe que criamos acima. */
+  const personagem = new Personagem(
+    item.nome,
+    item.classe,
+    item.vida,
+    item.nivel,
+    item.ataque,
+    item.defesa,
+    item.dataDeEntrada,
+    item.ativo,
+  )
+
+  /** As linhas a seguir servem para processar e aplicar os valores de 
+   * "desempenho", "descrição" e "melhorEquipe" que eu criei na classe de exemplo
+   * deste projeto. Na implementação de vocês eles ainda não estão sendo
+   * utilizados (serão usados quando implementarmos a funcionalidade de "editar"
+   * itens já existentes). */
+  if (item.desempenho) { personagem.avaliar(item.desempenho) }
+  if (item.descricao) { personagem.descrever(item.descricao) }
+  /** Este terceiro é um pouco diferente, pois como se trata de uma lista de 
+   * itens, pode ocorrer alguma conversão indesejada no meio da comunicação
+   * entre cliente e servidor. Isso se dá quando na hora que o objeto enviado
+   * pelo cliente é processado pela biblioteca que interage com o banco de
+   * dados: Ela converte uma lista vazia em um objeto, e este é armazenado
+   * no banco de dados como o texto "[object Object]" 
+   *
+   * Sim, se trata de um bug. Sim, a gente lida com essas coisas eventualmente
+   * no dia-a-dia. Sim, as vezes precisa de uma solução feia :( */
+  if (item.melhorEquipe) {
+    let equipe
+    /** Só queremos ler a lista de melhorEquipe se ela não for o texto bugado */
+    if (item.melhorEquipe !== "[object Object]") {
+      /** JSON.parse() vai converter o texto representando a lista pra uma lista
+       * de verdade em JavaScript válido */
+      equipe = JSON.parse(item.melhorEquipe)
+      /** Para cada item da lista, chamamos o método `adicionarEquipe` do 
+       * personagem criado pela classe para inserir o item na lista */
+      equipe.forEach((integrante) => {
+        personagem.adicionarEquipe(integrante)
+      })
+    }
+  }
+
   return `
     <div 
       style="
@@ -213,37 +260,57 @@ function mostrarItem(item) {
         border-radius: 20px;
       "
     >
-      <p>Nome: ${item.nome}</p>
-      <p>Data de aquisição: ${item.ano_lancamento}</p>
+      <p>Nome: ${personagem.nome}</p>
+      <p>Classe: ${personagem.classe}</p>
+      <p>Vida total: ${personagem.vida}</p>
+      <p>Nível: ${personagem.nivel}</p>
+      <p>Ataque: ${personagem.ataque}</p>
+      <p>Defesa: ${personagem.defesa}</p>
+      <p>Ativo/a: ${personagem.ativo ? "Sim" : "Não"}</p>
+      ${/** Na parte abaixo da "Data de aquisição, estamos tratando a
+         * formatação da data, que vem no formato `Date`:
+         * 1. Convertemos a data em um texto no formato:
+         *    "dia/mês/ano, hora:minuto:segundo" 
+         * 2. Separamos o texto em duas partes a partir da vírgula
+         * 3. Ficamos só com a primeira parte contendo a data */""}
+      <p>Data de aquisição: 
+      ${personagem.dataDeEntrada
+          .toLocaleString()
+          .split(",")[0]
+      }</p>
       ${"" /** Na linha abaixo, tempoDesdeAquisicao precisa dos parênteses para
-      que o valor da função seja calculado. */}
-      <p>Tempo desde aquisição: ${item.tempoDesdeAquisicao()}</p>
-      <p>Classe: ${item.classe}</p>
-      <p>Nível: ${item.nivel}</p>
-      <p>Vida total: ${item.vida}</p>
-      <p>Ataque: ${item.ataque}</p>
-      <p>Defesa: ${item.defesa}</p>
-      <p>Ativo/a: ${item.ativo ? "<p>Sim</p>" : "<p>Não</p>"}</p>
+      que o método seja executado e seu resultado seja calculado. */}
+      <p>Tempo desde aquisição: ${personagem.tempoDesdeAquisicao()} dias</p>
       ${/** A sintaxe abaixo de "variavel ? resultado_1 : resultado_2 é 
          * similar a um "if/else", mas ao invés de ser um "bloco de código" como
          * o "if/else", se trata de uma expressão, e portanto podemos utilizar 
          * no meio de textos usando ${}
          *
-         * Na linha onde temos ${item.desempenho ? valor_1 : valor_2}, o que 
-         * o código quer dizer é: "se item.desempenho não for um valor nulo, 
-         * exiba o que vem entre ? e :, senão exiba o que vem depois do : " */""}
-      ${item.desempenho // Se item.desempenho NÃO for nulo...
-        ? "<p>Desempenho: " + item.desempenho + "</p>" //...Exiba isso
-        : null // Senão, se item.desempenho FOR nulo, não exiba nada.
+         * Na linha onde temos ${personagem.desempenho ? valor_1 : valor_2}, 
+         * o que o código quer dizer é: "se personagem.desempenho não for um 
+         * valor nulo, exiba o que vem entre ? e :, senão exiba o que 
+         * vem depois do : " */""}
+      ${personagem.desempenho // Se personagem.desempenho NÃO for nulo...
+        ? "<p>Desempenho: " + personagem.desempenho + "</p>" //...Exiba isso
+        : "" // Senão, se personagem.desempenho FOR nulo, não exiba nada.
       }
-      ${item.melhorEquipe // Se item.melhorEquipe NÃO for nulo
-        ? "<p>Melhores sinergias: " + item.melhorEquipe + "</p>" //...Exiba isso
-        : null // Senão, se item.desempenho FOR nulo, não exiba nada.
+      ${personagem.melhorEquipe.length > 0 
+        // Se personagem.melhorEquipe acima tiver algum item...
+        ? "<p>Melhores parceiros/as: " + personagem.melhorEquipe + "</p>" 
+        //...Exiba a linha acima...
+        : "" // ... Caso contrário, não exiba nada.
       }
-      ${item.descricao // E aqui você já deve saber como funciona 🙂
-        ? "<p>Descrição: " + item.descricao + "</p>" 
-        : null 
+      ${personagem.descricao // E aqui você já deve saber como funciona 🙂
+        ? "<p>Descrição: " + personagem.descricao + "</p>" 
+        : "" 
       }
+      ${/** Na div abaixo temos o botão de apagar o item da biblioteca.
+         * Para a função que apaga o item `removerItem` precisa do ID
+         * do item da biblioteca para apagá-lo, e este ID não é armazenado
+         * no objeto criado pela classe, usamos o ID vindo diretamente do
+         * valor enviado pelo servidor, acessado pelo `item` passado como
+         * argumento para esta função `mostrarItem`
+      */""}
       <div style="display: flex; flex-direction: row;">
         <button 
           id="deletar-${item.id}"
@@ -461,6 +528,11 @@ async function enviarFormulario() {
     /** Aqui abaixo, caso o input contenha a palavra "defesa", converto o valor 
      * preenchido neste input para número com casa decimal */
     if(input.includes("defesa")) { valor = valor ? parseFloat(valor) : null }
+
+    if(input.includes("ativo")) { 
+      console.log("ativo = " + valor)
+      valor = valor // === "on" ? true : false 
+    }
     /** Aqui abaixo, caso o input contenha a palavra "entrada", converto o valor 
      * preenchido neste input para um objeto do tipo `Date` */
     if(input.includes("entrada")) { valor = valor ? new Date(valor) : null }
@@ -481,7 +553,12 @@ async function enviarFormulario() {
    *  até o último item da lista.
    * )
    */
+
+  console.log("propriedadesNovoPersonagem")
+  console.log(propriedadesNovoPersonagem)
   const personagem = new Personagem(...propriedadesNovoPersonagem)
+  console.log("personagem")
+  console.log(personagem)
 
   /** Por fim, executamos os passos 5 e 6 desta função (descrição acima do
    * nome dela: `enviarFormulario`) */
@@ -525,6 +602,8 @@ async function carregarItens() {
   try {
     /** Passos 3 e 4 da descrição acima */
     const resposta = await fetch(ENDERECO_BASE)
+    console.log("carregarItens resposta")
+    console.log(resposta)
     /** Passo 5 da descrição acima */
     if (!resposta.ok) {
       throw new Error("Falha em receber os itens da biblioteca.")
@@ -532,6 +611,8 @@ async function carregarItens() {
 
     /** Passo 6 da descrição acima */
     const resultado = await resposta.json()
+    console.log("carregarItens resultado")
+    console.log(resultado)
     /** Passo 7 da descrição acima */
     mostrarBiblioteca(resultado.data || [])
     /** Passo 8 da descrição acima */

@@ -43,7 +43,7 @@
       da biblioteca seja recarregado. O comportamento do botão está no `index.js `
   -->
   <div class="container-titulo">
-    <h1 class="titulo-biblioteca">Minha biblioteca de joguíneos</h1>
+    <h1 class="titulo-biblioteca">Biblioteca de personagens</h1>
     <button id="input-recarregar" style="height: 3rem;">Recarregar</button>
   </div>
 
@@ -153,13 +153,15 @@
       <label for="input-defesa">Multiplicador de defesa: </label>
       <input type="number" name="input-defesa" id="input-defesa"/>
 
-      <!--Sétimo input: Se o personagem está ativo na equipe -->
+      <!--Sétimo input: Data de aquisição do personagem, com o 
+          valor inicial de 18 de Janeiro de 2025
+      -->
+      <label for="input-entrada">Data de aquisição:</label>
+      <input type="date" name="input-entrada" id="input-entrada" value="2025-01-18"/>
+
+      <!--Oitavo input: Se o personagem está ativo na equipe -->
       <label for="input-ativo">Ativo na equipe: </label>
       <input type="checkbox" name="input-ativo" id="input-ativo"/>
-
-      <!--Oitavo input: Data de aquisição do personagem -->
-      <label for="input-entrada">Data de aquisição:</label>
-      <input type="date" name="input-entrada" id="input-entrada"/>
 
       <!--Esta DIV contém os botões de "enviar" e "limpar" -->
       <div style="display: flex; flex-direction: row; justify-content: flex-end;">

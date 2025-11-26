@@ -130,16 +130,16 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
      * biblioteca. No exemplo abaixo são:
      *
      * `nome`: Valor texto, nome do personagem.
-     * `vida`: Valor numérico inteiro, são os pontos de vida do personagem.
      * `classe`: Valor texto, que tipo de personagem ele/ela é.
+     * `vida`: Valor numérico inteiro, são os pontos de vida do personagem.
      * `nivel`: Valor numérico inteiro, o nível do personagem.
      * `ataque`: Valor numérico inteiro, dano do ataque.
      * `defesa`: Valor numérico real, multiplicador de defesa.
+     * `dataDeEntrada`: Valor texto, data em que entrou no grupo.
      * `ativo`: Valor booleano (verdadeiro/falso). Se está ativo no grupo.
      * `desempenho`: Valor numérico real, representa o quão bom é o personagem.
      * `descricao`: Valor texto, descreve como o personagem funciona.
      * `melhorEquipe`: Valor texto, lista JSON dos melhores parceiros de equipe.
-     * `dataDeEntrada`: Valor texto, data em que entrou no grupo.
      *
      * Todas as colunas são criadas da mesma forma:
      * `nome_da_coluna SEPO_DA_COLUNA PROPRIEDADES_DA_COLUNA`
@@ -168,16 +168,16 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ${""/* EDITE: Editem a partir da linha abaixo, separando com vírgula */}
       nome TEXT NOT NULL,
-      vida INTEGER,
       classe VARCHAR(100),
+      vida INTEGER,
       nivel INTEGER,
       ataque INTEGER,
       defesa FLOAT,
+      dataDeEntrada VARCHAR(100),
       ativo BOOLEAN,
       desempenho FLOAT,
       descricao TEXT,
-      melhorEquipe TEXT,
-      dataDeEntrada VARCHAR(100)
+      melhorEquipe TEXT
       ${""/* EDITE: Até aqui. A última linha NÃO PODE terminar com vírgula */}
     )`, (erro) => {
       /**
@@ -437,16 +437,16 @@ app.post('/api/biblioteca', (req, res) => {
   const {
     // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
-    vida,
     classe,
+    vida,
     nivel,
     ataque,
     defesa,
+    dataDeEntrada,
     ativo,
     desempenho,
     descricao,
-    melhorEquipe,
-    dataDeEntrada
+    melhorEquipe
     // EDITE: Até esta última linha acima.
   } = req.body;
 
@@ -475,16 +475,16 @@ app.post('/api/biblioteca', (req, res) => {
   const sql = `INSERT INTO Biblioteca (
   ${""/* EDITE: Editem a partir da linha abaixo, separando com vírgula */}
     nome,
-    vida,
     classe,
+    vida,
     nivel,
     ataque,
     defesa,
+    dataDeEntrada,
     ativo,
     desempenho,
     descricao,
-    melhorEquipe,
-    dataDeEntrada
+    melhorEquipe
   ${""/* EDITE: Até aqui. A última linha NÃO PODE terminar com vírgula */}
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   /**  EDITE: E edite a linha acima modificando a quantidade de interrogações
@@ -501,18 +501,20 @@ app.post('/api/biblioteca', (req, res) => {
   const params = [
     // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
-    vida,
     classe,
+    vida,
     nivel,
     ataque,
     defesa,
+    dataDeEntrada,
     ativo,
     desempenho,
     descricao,
-    melhorEquipe,
-    dataDeEntrada
+    melhorEquipe
     // EDITE: Até esta última linha acima.
   ];
+
+  console.log(params)
 
   /** GOTO: db_run
    * O método `run()` do banco de dados executa um comando SQL mas não retorna
@@ -578,16 +580,16 @@ app.put('/api/biblioteca/:id', (req, res) => {
   const {
     // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
-    vida,
     classe,
+    vida,
     nivel,
     ataque,
     defesa,
+    dataDeEntrada,
     ativo,
     desempenho,
     descricao,
-    melhorEquipe,
-    dataDeEntrada
+    melhorEquipe
     // EDITE: Até esta última linha acima.
   } = req.body;
   
@@ -611,16 +613,16 @@ app.put('/api/biblioteca/:id', (req, res) => {
   const sql = `UPDATE Biblioteca SET 
     ${""/* EDITE: Editem a partir da linha abaixo, separando com vírgula */}
     nome = ?,
-    vida = ?,
     classe = ?,
+    vida = ?,
     nivel = ?,
     ataque = ?,
     defesa = ?,
+    dataDeEntrada = ?,
     ativo = ?,
     desempenho = ?,
     descricao = ?,
-    melhorEquipe = ?,
-    dataDeEntrada = ?,
+    melhorEquipe = ?
     ${""/* EDITE: Apenas até a linha acima. Mantenha a vírgula na últina linha */}
     WHERE id = ?`;
 
@@ -633,16 +635,16 @@ app.put('/api/biblioteca/:id', (req, res) => {
   const params = [
     // EDITE: Editar os parâmetros da linha seguinte até...
     nome,
-    vida,
     classe,
+    vida,
     nivel,
     ataque,
     defesa,
+    dataDeEntrada,
     ativo,
     desempenho,
     descricao,
     melhorEquipe,
-    dataDeEntrada,
     // EDITE: Até esta última linha acima. A linha abaixo permanece como está.
     req.params.id
   ];
