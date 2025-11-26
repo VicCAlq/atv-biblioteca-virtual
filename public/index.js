@@ -528,11 +528,6 @@ async function enviarFormulario() {
     /** Aqui abaixo, caso o input contenha a palavra "defesa", converto o valor 
      * preenchido neste input para número com casa decimal */
     if(input.includes("defesa")) { valor = valor ? parseFloat(valor) : null }
-
-    if(input.includes("ativo")) { 
-      console.log("ativo = " + valor)
-      valor = valor // === "on" ? true : false 
-    }
     /** Aqui abaixo, caso o input contenha a palavra "entrada", converto o valor 
      * preenchido neste input para um objeto do tipo `Date` */
     if(input.includes("entrada")) { valor = valor ? new Date(valor) : null }
@@ -553,12 +548,7 @@ async function enviarFormulario() {
    *  até o último item da lista.
    * )
    */
-
-  console.log("propriedadesNovoPersonagem")
-  console.log(propriedadesNovoPersonagem)
   const personagem = new Personagem(...propriedadesNovoPersonagem)
-  console.log("personagem")
-  console.log(personagem)
 
   /** Por fim, executamos os passos 5 e 6 desta função (descrição acima do
    * nome dela: `enviarFormulario`) */
@@ -602,8 +592,6 @@ async function carregarItens() {
   try {
     /** Passos 3 e 4 da descrição acima */
     const resposta = await fetch(ENDERECO_BASE)
-    console.log("carregarItens resposta")
-    console.log(resposta)
     /** Passo 5 da descrição acima */
     if (!resposta.ok) {
       throw new Error("Falha em receber os itens da biblioteca.")
@@ -611,8 +599,6 @@ async function carregarItens() {
 
     /** Passo 6 da descrição acima */
     const resultado = await resposta.json()
-    console.log("carregarItens resultado")
-    console.log(resultado)
     /** Passo 7 da descrição acima */
     mostrarBiblioteca(resultado.data || [])
     /** Passo 8 da descrição acima */

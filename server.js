@@ -514,8 +514,6 @@ app.post('/api/biblioteca', (req, res) => {
     // EDITE: Até esta última linha acima.
   ];
 
-  console.log(params)
-
   /** GOTO: db_run
    * O método `run()` do banco de dados executa um comando SQL mas não retorna
    * nenhum dado, apenas uma "referência" para o próprio banco de dados para caso
