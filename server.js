@@ -142,7 +142,7 @@ const db = new sqlite3.Database('./biblioteca.db', (erro) => {
      * `melhorEquipe`: Valor texto, lista JSON dos melhores parceiros de equipe.
      *
      * Todas as colunas são criadas da mesma forma:
-     * `nome_da_coluna SEPO_DA_COLUNA PROPRIEDADES_DA_COLUNA`
+     * `nome_da_coluna TIPO_DA_COLUNA PROPRIEDADES_DA_COLUNA`
      *
      * Os nomes das colunas devem corresponder ao nome das propriedades dos 
      * objetos criados pela classe na sua aplicação frontend.
