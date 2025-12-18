@@ -1,121 +1,29 @@
-<!--- SEÇÃO: # 0. SOBRE ESTE ARQUIVO ##################################################-->
-<!---                                                                                  -->
-<!--------------------------------------------------------------------------------------->
-<!--- @author Victor Cavalcanti (www.github.com/VicCAlq) <victor.mca.dev@gmail.com>    -->
-<!--- @license MIT                                                                     -->
-<!--- @copyright Victor Cavalcanti 2025                                                -->
-<!--------------------------------------------------------------------------------------->
-<!--- @file Este arquivo compreende o HTML do cliente utilizado pela aplicação.        -->
-<!--- Vocês encontrarão diversos comentários como este ao longo do código explicando   -->
-<!--- cada parte. Leiam com atenção e no seu tempo.                                    -->
-<!---                                                                                  -->
-<!--- Os comentários explicativos são direcionados a alunos do ensino médio.           -->
-<!--- A linguagem busca ser o menos técnica o possível, portanto algumas das           -->
-<!--- explicações são superficiais, ou usam analogias imperfeitas.                     -->
-<!--------------------------------------------------------------------------------------->
-
-
-<!--- SEÇÃO: # 1. INÍCIO DO DOCUMENTO #################################################-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark"/>
-  <!-- Na linha abaixo vocês podem modificar o nome do site na aba do navegador -->
   <title>Biblioteca de personagens</title>
-  <!--As duas propriedades `link` abaixo anexam arquivos CSS ao nosso site:
-      - O primeiro `link` anexa um CSS externo 
-      - O segundo anexa um CSS armazenado na mesma pasta que este HTML 
-      Ambos são usados ao mesmo tempo, mas o que é importado por último tem a
-      prioridade na estilização dos elementos HTML 
-  -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css" />
   <link rel="stylesheet" href="index.css">
-  <!--Esta última adiciona um ícone para a aba do site no navegador -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
-<!--Aqui começa o conteúdo do site de fato -->
 <body>
-
-  <!--Esta primeira DIV contém o título do site e o botão que permite que o conteúdo
-      da biblioteca seja recarregado. O comportamento do botão está no `index.js `
-  -->
-  <div class="container-titulo">
-    <h1 class="titulo-biblioteca">Biblioteca de personagens</h1>
-    <button id="input-recarregar" style="height: 3rem;">Recarregar</button>
+  <div>
+    <h1>Biblioteca de personagens</h1>
   </div>
-
-
-  <!--Esta segunda DIV contém tanto a lista de itens da biblioteca quanto o formulário
-      que é preenchido para adicionar novos itens. 
-  -->
-  <div class="container-lista" >
-
-    <!--Aqui temos uma `section`: Tem a mesma função que uma `div`, mas tem o contexto
-        de indicar uma "seção" do site. Aqui dentro temos três elementos:
-        - Uma tag H3 para exibir um texto de carregamento dos itens da biblioteca
-        - Uma tag H3 para exibir uma possível mensagem de erro
-        - Uma DIV principal que é onde vamos inserir os itens da biblioteca
-        Apenas um destes três itens é exibido de cada vez:
-        - Quando "carregamento" é exibido, "erro" e "main" são ocultados
-        - Quando "erro" é exibido, "carregamento" e "main" são ocultados
-        - Quando "main" é exibido, "carregamento" e "erro" são ocultados
-        Este comportamento é controlado no JavaScript do site.
-    -->
+  <div>
     <section id="lista-biblioteca" style="width: 100%;">
-      <h3 id="carregamento" style="display: none">Carregando itens da biblioteca...</h3>
-      <h3 id="erro" style="display: none"></h3>
-
-        <div id="main"><!-- Aqui vai entrar o conteúdo da biblioteca --></div>
+        <div id="main"></div>
     </section>
-
-    <!--Aqui temos nosso formulário. Ele contém os "inputs" (campos para inserir 
-        informações) que serão utilizados em nosso JavaScript para criar os elementos
-        de nossa biblioteca.
-
-        Para que isso funcione, o formulário PRECISA ter um ID: neste caso, "formulario"
-        é suficiente. Cada elemento `input` dentro do formulário precisa das três
-        propriedades abaixo:
-        - `type`: O "tipo" do input: "text" para texto, "number" para número, "date"
-                  para datas, "checkbox" para ativo/desativo ou verdadeiro/falso, etc
-        - `name`: O "nome" do input. É utilizado no JavaScript quando vamos referenciar
-                  os valores preenchidos no input
-        - `id`: O identificador único do input: usado para atribuir estilos de CSS
-                ou para acessarmos o input de forma individual no JavaScript
-
-        Cada `input` tem também uma `label` associada a ele: Essa label é o que exibe
-        na página o nome daquele campo de input. A propriedade `for` da label é onde
-        inserimos o ID do input para fazer a associação.
-
-        Por fim, no final do formulário colocamos dois botões: um para enviar o
-        conteúdo preenchido, e outro para limpar do formulário o que foi preenchido.
-        O comportamento destes botões também é definido no JavaScript do site.
-    -->
     <form id="formulario" class="formulario">
-      <!--Aqui colocamos um título para o formulário -->
-      <h2 class="titulo-formulario">Adicionar novo jogo</h2>
-
-      <!--Primeiro input: O nome do personagem -->
+      <h2>Adicionar novo jogo</h2>
       <label for="input-nome">Nome do personagem:</label>
       <input type="text" name="input-nome" id="input-nome" required/>
-
-      <!--Segundo input: A classe do personagem. Uma lista de opções.
-          O input do tipo `select` é feito de forma diferente, ele tem o próprio
-          elemento `select`, e dentro dele temos elementos `option` que são as
-          opções da lista.
-      -->
       <label for="input-classe">Classe:</label>
       <select type="se" name="input-classe" id="input-classe">
-        <!--Dentro do "select" podemos agrupar as opções por grupos com
-            o elemento `optgroup`. Ele não possui valor quando selecionado.
-        -->
         <optgroup label="Combatentes">
-          <!--Cada opção da lista tem seu próprio elemento `option`.
-              O que está escrito entre as tags é o que é exibido para o usuário,
-              mas o que é enviado para o servidor é o que está no atributo `value`.
-          -->
           <option value="Lutador(a)" selected>Lutador(a)</option>
           <option value="Bárbaro/a">Bárbaro/a</option>
           <option value="Paladino/a">Paladino/a</option>
@@ -136,46 +44,22 @@
           <option value="Sábio">Sábio</option>
         </optgroup>
       </select>
-
-      <!--Terceiro input: Quantidade de pontos de vida totais -->
       <label for="input-vida">Pontos de vida:</label>
       <input type="number" name="input-vida" id="input-vida"/>
-
-      <!--Quarto input: Nível do personagem -->
       <label for="input-nivel">Nível: </label>
       <input type="number" name="input-nivel" id="input-nivel"/>
-
-      <!--Quinto input: Pontos de ataque do personagem -->
       <label for="input-ataque">Pontos de ataque:</label>
       <input type="number" name="input-ataque" id="input-ataque"/>
-
-      <!--Sexto input: Multiplicador de defesa do personagem -->
       <label for="input-defesa">Multiplicador de defesa: </label>
       <input type="number" name="input-defesa" id="input-defesa" step="0.05"/>
-
-      <!--Sétimo input: Data de aquisição do personagem, com o 
-          valor inicial de 18 de Janeiro de 2025
-      -->
       <label for="input-entrada">Data de aquisição:</label>
       <input type="date" name="input-entrada" id="input-entrada" value="2025-01-18"/>
-
-      <!--Oitavo input: Se o personagem está ativo na equipe -->
       <label for="input-ativo">Ativo na equipe: </label>
       <input type="checkbox" name="input-ativo" id="input-ativo"/>
-
-      <!--Esta DIV contém os botões de "enviar" e "limpar" -->
-      <div style="display: flex; flex-direction: row; justify-content: flex-end;">
         <button type="submit" id="input-enviar">Salvar</button>
-        <button type="button" id="input-cancelar" style="background-color: maroon;">Cancelar</button>
-      </div>
-    <!--Só aqui que termina o elemento do formulário. -->
     </form>
-
   </div>
-
-  <!--E aqui é onde carregamos o JavaScript responsável pelo site. -->
   <script type="text/javascript" src="index.js"></script>
-
 </body>
 </html>
 

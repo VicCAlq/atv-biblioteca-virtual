@@ -1,9 +1,9 @@
 {
-  "name": "games-api",
+  "name": "projeto-exemplo",
   "private": true,
   "version": "0.0.1",
   "type": "commonjs",
-  "description": "Biblioteca virtual para gerenciamento de personagens",
+  "description": "Este aluno usou o projeto de exemplo",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
